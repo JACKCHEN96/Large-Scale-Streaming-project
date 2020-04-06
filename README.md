@@ -7,8 +7,10 @@ https://github.com/ColinEberhardt/awesome-public-streaming-datasets
 https://www.cnblogs.com/cymx66688/p/10699018.html
 3. CDR Data Generator
 https://github.com/deshpandetanmay/cdr-data-generator
-4. CDR Date Generator (Java)
+4. CDR Data Generator
 https://github.com/GokhanYilmaz44/cdr-data-gen
-5. Project Proposal
+5. CDR Data Generator Reference
+https://medium.com/@zusmani/call-detail-records-cdr-dataset-final-year-project-fyp-9be1c9f276b
+6. Project Proposal
 https://drive.google.com/file/d/1D2Ab_wkSqBlJuCDjxZykYhzTVzGzlCV_/view
 
