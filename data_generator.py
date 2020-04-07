@@ -7,19 +7,33 @@ import random
 import datetime
 import uuid
 
-# f1=faker.Faker().address()
-# print(f1)
 f1=faker.Factory
-
-# for i in range (100):
 
 class data_generator:
     """
     A complete CRD
     """
-    def __init__(self,ID=None):
-        # self.ID=ID
-        pass
+    def __init__(self,ID=None,callnumber=None,callednumber=None,teltime=None,teltype=None,charge=None,result=None):
+        self.ID=self.gen_ID()
+        self.callnumber=self.gen_callnumber()
+        self.callednumber=self.gen_callednumber()
+        self.teltime=self.gen_teltime()
+        self.teltype=self.gen_teltype()
+        self.charge=self.gen_charge()
+        self.result=self.gen_result()
+        if ID is not None: self.ID=ID
+        if callnumber is not None: self.callnumber = callnumber
+        if callednumber is not None: self.callednumber = callednumber
+        if teltime is not None: self.telltime = teltime
+        if teltype is not None: self.teltype = teltype
+        if charge is not None: self.charge = charge
+        if result is not None: self.result = result
+
+    def __str__(self):
+        data = str(self.ID)+"|"+str(self.callnumber)+"|"\
+               +str(self.callednumber)+"|"+str(self.teltime)+"|"\
+               +str(self.teltype)+"|"+str(self.charge)+"|"+str(self.result)
+        return data
 
     def gen_ID(self):
         return uuid.uuid1()
@@ -56,13 +70,11 @@ class data_generator:
         else:
             return "VOICE"
 
-    def gen_data(self):
-        # self.ID=self.gen_ID()
-        return str(self.gen_ID())+"|"+str(self.gen_callnumber())+"|"\
-               +str(self.gen_callednumber())+"|"+str(self.gen_teltime())+"|"\
-               +str(self.gen_teltype())+"|"+str(self.gen_charge())+"|"+str(self.gen_result())
+    def output_redis(self):
+        pass
 
-d1=data_generator()
+d1=data_generator(ID=1)
 d2=data_generator()
-print(d1.gen_data())
-print(d2.gen_data())
+print(d1.ID)
+print(d1)
+print(d2)
