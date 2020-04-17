@@ -16,9 +16,8 @@ class data_generator:
     """
     A complete CRD
     """
-    def __init__(self,ID=None,callnumber=None,callednumber=None,teltime=None,teltype=None,charge=None,result=None,type=None):
+    def __init__(self,ID=None,callednumber=None,teltime=None,teltype=None,charge=None,result=None,type=None):
         self.ID=self.gen_ID()
-        self.callnumber=self.gen_callnumber()
         self.callednumber=self.gen_callednumber()
         self.teltime=self.gen_teltime()
         self.teltype=self.gen_teltype()
@@ -26,28 +25,23 @@ class data_generator:
         self.result=self.gen_result()
         self.type=self.gen_type()
         if ID is not None: self.ID=ID
-        if callnumber is not None: self.callnumber = callnumber
         if callednumber is not None: self.callednumber = callednumber
         if teltime is not None: self.telltime = teltime
         if teltype is not None: self.teltype = teltype
         if charge is not None: self.charge = charge
         if result is not None: self.result = result
         if type is not None: self.type=type
-        self.output_redis_1()
-        self.output_redis_2()
+        # self.output_redis_1()
+        # self.output_redis_2()
 
     def __str__(self):
-        data = str(self.ID)+"|"+str(self.callnumber)+"|"\
+        data = str(self.ID)+"|"\
                +str(self.callednumber)+"|"+str(self.teltime)+"|"\
                +str(self.teltype)+"|"+str(self.charge)+"|"+str(self.result)
         return data
 
     def gen_ID(self):
         return uuid.uuid1()
-
-    def gen_callnumber(self):
-        callnumber=f1.create()
-        return callnumber.phone_number()
 
     def gen_callednumber(self):
         callednumber=f1.create()
@@ -93,8 +87,47 @@ class data_generator:
     def output_redis_1(self):
         rds.set(str(self.ID),str(self))
 
-    def output_redis_2(self):
-        rds_type.set(str(self.callnumber),str(self.type))
+    # def output_redis_2(self):
+    #     rds_type.set(str(self.callnumber),str(self.type))
+
+
+class people:
+    """
+    A unique people with 1-5 telephones makes several calls
+    """
+    def __init__(self,ID=None,callnumber=None,calltimes=None):
+        self.ID=self.gen_ID()
+        self.callnumber=self.gen_callnumber()
+        self.calltimes=self.gen_calltimes()
+        if ID is not None: self.ID=ID
+        if callnumber is not None: self.callnumber = callnumber
+        if calltimes is not None: self.calltimes=calltimes
+        self.data=[]
+        self.gen_data()
+
+
+    def __str__(self):
+        fuldata=""
+        for i in range(self.calltimes):
+            fuldata+=str(self.ID)+"|"+str(self.callnumber)+"|"\
+                     +(str(self.data[i]))+"\n"
+        return fuldata
+
+    def gen_ID(self):
+        return uuid.uuid1()
+
+    def gen_callnumber(self):
+        callnumber=f1.create()
+        return callnumber.phone_number()
+
+    def gen_calltimes(self):
+        return random.randint(1,5)
+
+    def gen_data(self):
+        for i in range(self.calltimes):
+            data_generator_temp=data_generator
+            self.data.append(data_generator_temp)
+
 
 
 # test generate
@@ -104,15 +137,19 @@ d2=data_generator()
 print(d1)
 print(d2)
 print(d1.type)
+p1=people()
+# test people
+print("##############test people###########################")
+print(p1)
 # test output_redis
-print("##############test output_redis#######################")
-print(rds[str(d1.ID)])
-print(rds[str(d2.ID)])
-# test iterate redis data
-print("##############test iterate redis data#################")
-keys=rds.keys()
-print(keys)
-# test iterate redis_type data
-print("##############test iterate redis_type data############")
-keys_type=rds_type.keys()
-print(keys_type)
+# print("##############test output_redis#######################")
+# print(rds[str(d1.ID)])
+# print(rds[str(d2.ID)])
+# # test iterate redis data
+# print("##############test iterate redis data#################")
+# keys=rds.keys()
+# print(keys)
+# # test iterate redis_type data
+# print("##############test iterate redis_type data############")
+# keys_type=rds_type.keys()
+# print(keys_type)
