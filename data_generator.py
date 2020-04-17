@@ -31,8 +31,7 @@ class data_generator:
         if charge is not None: self.charge = charge
         if result is not None: self.result = result
         if type is not None: self.type=type
-        # self.output_redis_1()
-        # self.output_redis_2()
+        self.output_redis_2()
 
     def __str__(self):
         data = str(self.ID)+"|"\
@@ -83,12 +82,8 @@ class data_generator:
         }
         return type.get(r)
 
-
-    def output_redis_1(self):
-        rds.set(str(self.ID),str(self))
-
-    # def output_redis_2(self):
-    #     rds_type.set(str(self.callnumber),str(self.type))
+    def output_redis_2(self):
+        rds_type.set(str(self.callednumber),str(self.type))
 
 
 class people:
@@ -109,8 +104,10 @@ class people:
     def __str__(self):
         fuldata=""
         for i in range(self.calltimes):
-            fuldata+=str(self.ID)+"|"+str(self.callnumber)+"|"\
-                     +(str(self.data[i]))+"\n"
+            tempdata=str(self.ID)+"|"+str(self.callnumber)+"|"\
+                     +(str(self.data[i]))
+            self.output_redis_1(self.data[i].ID,tempdata)
+            fuldata+=tempdata+"\n"
         return fuldata
 
     def gen_ID(self):
@@ -125,8 +122,12 @@ class people:
 
     def gen_data(self):
         for i in range(self.calltimes):
-            data_generator_temp=data_generator
+            data_generator_temp=data_generator()
             self.data.append(data_generator_temp)
+
+    def output_redis_1(self,ID, tempdata):
+        rds.set(str(ID),str(tempdata))
+
 
 
 
@@ -142,14 +143,13 @@ p1=people()
 print("##############test people###########################")
 print(p1)
 # test output_redis
-# print("##############test output_redis#######################")
-# print(rds[str(d1.ID)])
-# print(rds[str(d2.ID)])
-# # test iterate redis data
-# print("##############test iterate redis data#################")
-# keys=rds.keys()
-# print(keys)
-# # test iterate redis_type data
-# print("##############test iterate redis_type data############")
-# keys_type=rds_type.keys()
-# print(keys_type)
+print("##############test output_redis#######################")
+print(rds[str(p1.data[0].ID)])
+# test iterate redis data
+print("##############test iterate redis data#################")
+keys=rds.keys()
+print(keys)
+# test iterate redis_type data
+print("##############test iterate redis_type data############")
+keys_type=rds_type.keys()
+print(keys_type)
