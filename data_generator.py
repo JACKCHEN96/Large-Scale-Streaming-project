@@ -32,7 +32,7 @@ class data_generator:
         if charge is not None: self.charge = charge
         if result is not None: self.result = result
         if type is not None: self.type=type
-        # self.output_redis_2()
+        self.output_redis_2()
 
     def __str__(self):
         data = str(self.ID)+"|"\
@@ -163,7 +163,7 @@ class people:
         for i in range(self.calltimes):
             tempdata=str(self.ID)+"|"+str(self.callnumber)+"|"\
                      +(str(self.data[i]))
-            # self.output_redis_1(self.data[i].ID,tempdata)
+            self.output_redis_1(self.data[i].ID,tempdata)
             fuldata+=tempdata+"\n"
         return fuldata
 
