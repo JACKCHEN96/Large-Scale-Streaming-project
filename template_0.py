@@ -28,7 +28,32 @@ class template_0:
                           decode_responses=True,
                           db=self.connect_info['db']
                           )  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+        pipe = rds.pipeline()
+        pipe_size = 100000
+        len = 0
+        key_list = []
+        value_list = []
+        # print(r.pipeline())
+        keys = rds.keys()
+        for key in keys:
+            key_list.append(key)
+            pipe.get(key)
+            if len < pipe_size:
+                len += 1
+            else:
+                for (k, v) in zip(key_list, pipe.execute()):
+                    print(k, v)
+                len = 0
+                key_list = []
 
+        for (k, v) in zip(key_list, pipe.execute()):
+            value_list.append(str(v))
+
+        spark = SparkSession.builder.appName('myApp').getOrCreate()
+        sc = SparkContext.getOrCreate(SparkConf().setMaster("local[*]"))
+
+        # self.lines = sc.textFile("test_db_0.txt")
+        self.lines = sc.parallelize(value_list)
 
     def __str__(self):
         pass
@@ -37,15 +62,13 @@ class template_0:
         """
         This function is to read n lines data from redis, then count the call time duration sum of every hour.
         """
-        spark = SparkSession.builder.appName('myApp').getOrCreate()
-        sc = SparkContext.getOrCreate(SparkConf().setMaster("local[*]"))
-        lines = sc.textFile("test_db_0.txt")
-        id_time_duration = lines.map(lambda x: (x.split("|")[2], x.split("|")[4], x.split("|")[5]))
 
         # TODO. Drop all invalid data
         # id_time_duration_np=ip_time_duration_np.filter((lambda x: x[0].replace(":","").isdigit()))
         # id_time_duration=id_time_duration_np.filter(lambda x: x[-1].isdigit())
 
+
+        id_time_duration = self.lines.map(lambda x: (x.split("|")[2], x.split("|")[4], x.split("|")[5]))
         print("Id_time_duration for all")
         print(id_time_duration.take(70))
         print("\n")
