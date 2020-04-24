@@ -10,23 +10,26 @@ import redis
 import numpy as np
 
 f1=faker.Factory
-rds = redis.Redis(host='localhost', port=6379, decode_responses=True, db=0)   # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
-rds_type = redis.Redis(host='localhost', port=6379, decode_responses=True, db=1)
-rds_type_2 =  redis.Redis(host='localhost', port=6379, decode_responses=True, db=2)
+# rds = redis.Redis(host='localhost', port=6379, decode_responses=True, db=0)   # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+# rds_type = redis.Redis(host='localhost', port=6379, decode_responses=True, db=1)
+# rds_type_2 =  redis.Redis(host='localhost', port=6379, decode_responses=True, db=2)
 
 
 class data_generator:
     """
     A complete CRD
     """
-    def __init__(self,ID=None,callednumber=None,teltime=None,teltype=None,charge=None,result=None,type=None,pick_call_distribution="default", delta_distribution="default"):
+    def __init__(self,ID=None,callednumber=None,teltime=None,teltype=None,charge=None,result=None,type=None,
+                 pick_type_distribution="default", rate_type_distribution=0.1,
+                 pick_call_distribution="default", delta_distribution="default"):
+
         self.ID=self.gen_ID()
         self.callednumber=self.gen_callednumber()
         self.teltime=self.gen_teltime(pick_call_distribution,delta_distribution)
         self.teltype=self.gen_teltype()
         self.charge=self.gen_charge()
         self.result=self.gen_result()
-        self.type=self.gen_type()
+        self.type=self.gen_type(pick_type_distribution, rate_type_distribution)
         self.type_2=self.gen_type_2()
 
         if ID is not None: self.ID=ID
@@ -36,8 +39,8 @@ class data_generator:
         if charge is not None: self.charge = charge
         if result is not None: self.result = result
         if type is not None: self.type=type
-        self.output_redis_2()
-        self.output_redis_3()
+        # self.output_redis_2()
+        # self.output_redis_3()
 
     def __str__(self):
         data = str(self.ID)+"|"\
@@ -124,24 +127,29 @@ class data_generator:
         return random.random()
 
     def gen_result(self):
-        r=random.randint(0,2)
-        if(r==0):
+        r=random.randint(1,10)
+        if(r<9):
             return "AWNSERED"
-        elif (r==1):
-            return "BUSY"
         else:
-            return "VOICE"
+            return "Busy"
 
-    def gen_type(self):
-        r=random.randint(0,5)
+    def gen_type(self, pick_type_distribution, rate_type_distribution):
         type={
             0: "Business",
             1: "Agency",
             2: "Education",
             3: "Scam",
-            4: "Business",
+            4: "Health",
             5: "AD"
         }
+        r = random.randint(0, 5)
+        if(pick_type_distribution=="default"):
+            return type.get(r)
+
+        r2=random.randint(1,100)
+        if(r2<rate_type_distribution):
+            return pick_type_distribution
+        # r=(6N-1)/5
         return type.get(r)
 
     def gen_type_2(self):
@@ -167,15 +175,23 @@ class people:
     """
     A unique people with 1-5 telephones makes several calls
     """
-    def __init__(self,ID=None,callnumber=None,calltimes=None):
+    def __init__(self,ID=None,callnumber=None,calltimes=None,
+                 callednumber=None, teltime=None, teltype=None, charge=None, result=None, type=None,
+                 pick_type_distribution="default", rate_type_distribution=0.3,
+                 pick_call_distribution="default", delta_distribution="default"
+                 ):
+        # People
         self.ID=self.gen_ID()
         self.callnumber=self.gen_callnumber()
         self.calltimes=self.gen_calltimes()
         if ID is not None: self.ID=ID
         if callnumber is not None: self.callnumber = callnumber
         if calltimes is not None: self.calltimes=calltimes
+
         self.data=[]
-        self.gen_data()
+        self.gen_data(None, callednumber, teltime, teltype, charge, result, type,
+                 pick_type_distribution, rate_type_distribution,
+                 pick_call_distribution, delta_distribution)
 
 
     def __str__(self):
@@ -183,7 +199,7 @@ class people:
         for i in range(self.calltimes):
             tempdata=str(self.ID)+"|"+str(self.callnumber)+"|"\
                      +(str(self.data[i]))
-            self.output_redis_1(self.data[i].ID,tempdata)
+            # self.output_redis_1(self.data[i].ID,tempdata)
             fuldata+=tempdata+"\n"
         return fuldata
 
@@ -197,9 +213,13 @@ class people:
     def gen_calltimes(self):
         return random.randint(1,5)
 
-    def gen_data(self):
+    def gen_data(self,ID= None, callednumber=None, teltime=None, teltype=None, charge=None, result=None, type=None,
+                 pick_type_distribution="default", rate_type_distribution=0.3,
+                 pick_call_distribution="default", delta_distribution="default"):
         for i in range(self.calltimes):
-            data_generator_temp=data_generator()
+            data_generator_temp=data_generator(ID, callednumber, teltime, teltype, charge, result, type,
+                                               pick_type_distribution, rate_type_distribution,
+                                               pick_call_distribution, delta_distribution)
             self.data.append(data_generator_temp)
 
     def output_redis_1(self,ID, tempdata):
@@ -209,23 +229,23 @@ class people:
 # test generate
 print("----------- test generate -----------")
 d1 = data_generator(ID=1)
-d2 = data_generator()
+d2 = data_generator(pick_call_distribution="morning mode",pick_type_distribution="Education",rate_type_distribution=10)
 print(d1)
 print(d2)
-print(d1.type)
+print(d2.type)
 
 # test people
 print("------------ test people ------------")
 p1 = people()
 print(p1)
 
-# test iterate redis datas
-print("-------------- test iterate redis data --------------")
-keys = rds.keys()
-print(keys)
-
-# test iterate redis_type data
-print("-------------- test iterate redis_type data --------------")
-keys_type = rds_type.keys()
-print(keys_type)
+# # test iterate redis datas
+# print("-------------- test iterate redis data --------------")
+# keys = rds.keys()
+# print(keys)
+#
+# # test iterate redis_type data
+# print("-------------- test iterate redis_type data --------------")
+# keys_type = rds_type.keys()
+# print(keys_type)
 
