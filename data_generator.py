@@ -8,11 +8,12 @@ import datetime
 import uuid
 import redis
 import numpy as np
+from phonenumbers.phonenumberutil import region_code_for_country_code
 
 f1=faker.Factory
-# rds = redis.Redis(host='localhost', port=6379, decode_responses=True, db=0)   # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
-# rds_type = redis.Redis(host='localhost', port=6379, decode_responses=True, db=1)
-# rds_type_2 =  redis.Redis(host='localhost', port=6379, decode_responses=True, db=2)
+rds = redis.Redis(host='localhost', port=6379, decode_responses=True, db=0)   # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+rds_type = redis.Redis(host='localhost', port=6379, decode_responses=True, db=1)
+rds_type_2 =  redis.Redis(host='localhost', port=6379, decode_responses=True, db=2)
 
 
 class data_generator:
@@ -21,16 +22,16 @@ class data_generator:
     """
     def __init__(self,ID=None,callednumber=None,teltime=None,teltype=None,charge=None,result=None,type=None,
                  pick_type_distribution="default", rate_type_distribution=0.1,
-                 pick_call_distribution="default", delta_distribution="default"):
+                 pick_call_distribution="default", delta_distribution="default",
+                 rate_place_distribution=0.7):
 
         self.ID=self.gen_ID()
-        self.callednumber=self.gen_callednumber()
+        self.callednumber=self.gen_callednumber(rate_place_distribution)
         self.teltime=self.gen_teltime(pick_call_distribution,delta_distribution)
         self.teltype=self.gen_teltype()
         self.charge=self.gen_charge()
         self.result=self.gen_result()
         self.type=self.gen_type(pick_type_distribution, rate_type_distribution)
-        self.type_2=self.gen_type_2()
 
         if ID is not None: self.ID=ID
         if callednumber is not None: self.callednumber = callednumber
@@ -39,8 +40,7 @@ class data_generator:
         if charge is not None: self.charge = charge
         if result is not None: self.result = result
         if type is not None: self.type=type
-        # self.output_redis_2()
-        # self.output_redis_3()
+        self.output_redis_2()
 
     def __str__(self):
         data = str(self.ID)+"|"\
@@ -51,9 +51,19 @@ class data_generator:
     def gen_ID(self):
         return uuid.uuid1()
 
-    def gen_callednumber(self):
-        callednumber=f1.create()
-        return callednumber.phone_number()
+    def gen_callednumber(self, rate_place_distribution):
+        r = random.randint(1,100)
+        if r<100*rate_place_distribution:
+            place="1"
+        else:
+            place = random.randint(1, 300)
+            while(region_code_for_country_code(place)=="ZZ"):
+                place=random.randint(1,300)
+
+        first = str(random.randint(100, 999))
+        second = str(random.randint(1, 888)).zfill(3)
+        last = str(random.randint(1, 9998)).zfill(4)
+        return '+{}-{}-{}-{}'.format(str(place), first, second, last)
 
     def gen_teltime(self,pick_call_distribution,delta_distribution):
         """
@@ -147,28 +157,13 @@ class data_generator:
             return type.get(r)
 
         r2=random.randint(1,100)
-        if(r2<rate_type_distribution):
+        if(r2<100*rate_type_distribution):
             return pick_type_distribution
         # r=(6N-1)/5
         return type.get(r)
 
-    def gen_type_2(self):
-        r=random.randint(0,5)
-        type={
-            0: "United States",
-            1: "France",
-            2: "Japan",
-            3: "Italy",
-            4: "Canada",
-            5: "China"
-        }
-        return type.get(r)
-
     def output_redis_2(self):
         rds_type.set(str(self.callednumber),str(self.type))
-
-    def output_redis_3(self):
-        rds_type_2.set(str(self.callednumber),str(self.type_2))
 
 
 class people:
@@ -178,7 +173,8 @@ class people:
     def __init__(self,ID=None,callnumber=None,calltimes=None,
                  callednumber=None, teltime=None, teltype=None, charge=None, result=None, type=None,
                  pick_type_distribution="default", rate_type_distribution=0.3,
-                 pick_call_distribution="default", delta_distribution="default"
+                 pick_call_distribution="default", delta_distribution="default",
+                 rate_place_distribution=0.7
                  ):
         # People
         self.ID=self.gen_ID()
@@ -190,8 +186,9 @@ class people:
 
         self.data=[]
         self.gen_data(None, callednumber, teltime, teltype, charge, result, type,
-                 pick_type_distribution, rate_type_distribution,
-                 pick_call_distribution, delta_distribution)
+                      pick_type_distribution, rate_type_distribution,
+                      pick_call_distribution, delta_distribution,
+                      rate_place_distribution)
 
 
     def __str__(self):
@@ -199,7 +196,7 @@ class people:
         for i in range(self.calltimes):
             tempdata=str(self.ID)+"|"+str(self.callnumber)+"|"\
                      +(str(self.data[i]))
-            # self.output_redis_1(self.data[i].ID,tempdata)
+            self.output_redis_1(self.data[i].ID,tempdata)
             fuldata+=tempdata+"\n"
         return fuldata
 
@@ -207,19 +204,31 @@ class people:
         return uuid.uuid1()
 
     def gen_callnumber(self):
-        callnumber=f1.create()
-        return callnumber.phone_number()
+        r = random.randint(1, 10)
+        if r<8:
+            place="1"
+        else:
+            place = random.randint(1, 300)
+            while(region_code_for_country_code(place)=="ZZ"):
+                place=random.randint(1,300)
+        first = str(random.randint(100, 999))
+        second = str(random.randint(1, 888)).zfill(3)
+        last = str(random.randint(1, 9998)).zfill(4)
+
+        return '+{}-{}-{}-{}'.format(str(place), first, second, last)
 
     def gen_calltimes(self):
         return random.randint(1,5)
 
     def gen_data(self,ID= None, callednumber=None, teltime=None, teltype=None, charge=None, result=None, type=None,
                  pick_type_distribution="default", rate_type_distribution=0.3,
-                 pick_call_distribution="default", delta_distribution="default"):
+                 pick_call_distribution="default", delta_distribution="default",
+                 rate_place_distribution=0.7):
         for i in range(self.calltimes):
             data_generator_temp=data_generator(ID, callednumber, teltime, teltype, charge, result, type,
                                                pick_type_distribution, rate_type_distribution,
-                                               pick_call_distribution, delta_distribution)
+                                               pick_call_distribution, delta_distribution,
+                                               rate_place_distribution)
             self.data.append(data_generator_temp)
 
     def output_redis_1(self,ID, tempdata):

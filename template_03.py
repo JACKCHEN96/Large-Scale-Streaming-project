@@ -2,11 +2,10 @@ __author__ = "Jiajing Sun"
 __email__ = "js5504@columbia.edu"
 
 import redis
-import numpy as np
 from pyspark import SparkConf, SparkContext
 from pyspark.sql.functions import *
 from pyspark.sql import SparkSession
-import findspark
+from phonenumbers.phonenumberutil import region_code_for_country_code
 
 class template_3:
     """
@@ -67,42 +66,15 @@ class template_3:
         """
         This function is to read n lines data from redis, then count the call time duration sum of every hour.
         """
-        # Drop all invalid data
-        #id_time_duration_np=ip_time_duration_np.filter((lambda x: x[0].replace(":","").isdigit()))
-        # id_time_duration=id_time_duration_np.filter(lambda x: x[-1].isdigit())
+        # Drop all invalid data. TODO
 
-        id_time_duration = self.lines.map(lambda x: (x.split("|")[3]))
+        callednumber = self.lines.map(lambda x: (x.split("|")[3]))
+        place=callednumber.map(lambda x: region_code_for_country_code(int(x.split("-")[0].split("+")[1])))
+        place_count=place.map(lambda place: (place, 1)).reduceByKey(lambda x, y: x + y)
+        print(place_count.take(20))
 
-        print("Total number",len(id_time_duration.take(120)))
-        print(id_time_duration.take(120))
-        print("\n")
 
-        # Select the first digits of the callednumber
-        temp_id_time_duration = id_time_duration.map(lambda x: (x.replace('.','-').split('-')[0]))
-        # Filter the first digits with only numerical value 
-        temp_filter_digit = temp_id_time_duration.filter(lambda x: x[0].isdigit())
-        
-        # Filter the number with "+"
-        temp_filter_plus = temp_id_time_duration.filter(lambda x: x[0] == "+")
-        # Filter the number with "("
-        temp_filter_bracket = temp_id_time_duration.filter(lambda x: x[0] == "(")
 
-        # print all the first digits
-        print(temp_id_time_duration.take(120))
-        print('Total_Callednumber',len(temp_id_time_duration.take(120)))
-        print("\n")
-        # print the first figits with only numerical value 
-        print(temp_filter_digit.take(100))
-        print('China',len(temp_filter_digit.take(100)))  # number with only digit 
-        print("\n")
-        # print the first digits with "+1"
-        print(temp_filter_plus.take(100))
-        print('United States',len(temp_filter_plus.take(100))) 
-        print("\n")
-        # print the first digits with "()"
-        print(temp_filter_bracket.take(100))
-        print('Canada',len(temp_filter_bracket.take(100))) 
-        print("\n")
 
         
 test_temp_3 = template_3()
