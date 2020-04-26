@@ -14,11 +14,17 @@ https://medium.com/@zusmani/call-detail-records-cdr-dataset-final-year-project-f
 6. Project Proposal
 https://drive.google.com/file/d/1D2Ab_wkSqBlJuCDjxZykYhzTVzGzlCV_/view
 7. K means clustering
+
 https://ijarcce.com/upload/2016/december-16/IJARCCE%2064.pdf
+
 https://github.com/treselle-systems/CDR_analysis_using_K_means_in_Tableau
+
 https://dzone.com/articles/call-detail-record-cdr-analysis-k-means-clustering
+
 https://dzone.com/articles/call-detail-record-analysis-k-means-clustering-wit
+
 https://rstudio-pubs-static.s3.amazonaws.com/285230_77bf2615bffc4fdc8e234bd8797561aa.html
+
 https://github.com/search?q=cdr+k+means+clustering
 
 
