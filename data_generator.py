@@ -1,16 +1,16 @@
 __author__ = "Wenjie Chen"
 __email__ = "wc2685@columbia.edu"
 
-# from faker import Faker
 import faker
 import random
-import datetime
+from random import uniform
+from time import *
 import uuid
 import redis
 import numpy as np
 from phonenumbers.phonenumberutil import region_code_for_country_code
 
-f1=faker.Factory
+# f1=faker.Factory
 rds = redis.Redis(host='localhost', port=6379, decode_responses=True, db=0)   # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
 rds_type = redis.Redis(host='localhost', port=6379, decode_responses=True, db=1)
 rds_type_2 =  redis.Redis(host='localhost', port=6379, decode_responses=True, db=2)
@@ -52,8 +52,8 @@ class data_generator:
         return uuid.uuid1()
 
     def gen_callednumber(self, rate_place_distribution):
-        r = random.randint(1,100)
-        if r<100*rate_place_distribution:
+        r1 = random.randint(1,100)
+        if r1<100*rate_place_distribution:
             place="1"
         else:
             place = random.randint(1, 300)
@@ -82,31 +82,42 @@ class data_generator:
         else:
             call_distribution=pick_call_distribution
 
-        time=f1.create()
+        # mktime(tuple)讲时间元组转换为本地时间
+        # 日期元组说明：年，月，日，时，分，秒，周，儒历日，夏令时
+        date1 = (2018, 1, 1, 0, 0, 0, -1, -1, -1)
+        time1 = mktime(date1)
+        date2 = (2020, 1, 1, 0, 0, 0, -1, -1, -1)
+        time2 = mktime(date2)
+        # 在这一范围内生成随机数
+        # starttime = uniform(time1, time2)
+        # localtime(seconds)将秒数转换为日期元组
+        # 打印例子：Wed Feb 24 05:29:22 2016
+
         if(call_distribution=="midnight mode"):
             # TODO
-            starttime = time.iso8601(tzinfo=None)
-            while(starttime.split("T")[1].split(":")[0]>"6" and i<4):
-                starttime = time.iso8601(tzinfo=None)
+            # starttime = uniform(time1, time2)
+            starttime=asctime(localtime(uniform(time1, time2)))
+            while(starttime.split(" ")[3].split(":")[0]>"6" and i<4):
+                starttime=asctime(localtime(uniform(time1, time2)))
                 i+=1
         elif(call_distribution=="morning mode"):
             # TODO
-            starttime = time.iso8601(tzinfo=None)
-            while(starttime.split("T")[1].split(":")[0]>"12" or starttime.split("T")[1].split(":")[0]<"6" and i<4):
-                starttime = time.iso8601(tzinfo=None)
+            starttime=asctime(localtime(uniform(time1, time2)))
+            while(starttime.split(" ")[3].split(":")[0]>"12" or starttime.split(" ")[3].split(":")[0]<"6" and i<4):
+                starttime=asctime(localtime(uniform(time1, time2)))
                 i+=1
         elif(call_distribution=="afternoon mode"):
-            starttime = time.iso8601(tzinfo=None)
-            while(starttime.split("T")[1].split(":")[0]>"18" or starttime.split("T")[1].split(":")[0]<"12" and i<4):
-                starttime = time.iso8601(tzinfo=None)
+            starttime=asctime(localtime(uniform(time1, time2)))
+            while(starttime.split(" ")[3].split(":")[0]>"18" or starttime.split(" ")[3].split(":")[0]<"12" and i<4):
+                starttime=asctime(localtime(uniform(time1, time2)))
                 i+=1
         elif(call_distribution=="evening mode"):
-            starttime = time.iso8601(tzinfo=None)
-            while(starttime.split("T")[1].split(":")[0]<"18" and i<4):
-                starttime = time.iso8601(tzinfo=None)
+            starttime=asctime(localtime(uniform(time1, time2)))
+            while(starttime.split(" ")[3].split(":")[0]<"18" and i<4):
+                starttime=asctime(localtime(uniform(time1, time2)))
                 i+=1
         else:
-            starttime = time.iso8601(tzinfo=None)
+            starttime=asctime(localtime(uniform(time1, time2)))
 
         # If you are confused of distribution command, please refer to this tutorial:
         # https://blog.csdn.net/howhigh/article/details/78007317
@@ -125,6 +136,7 @@ class data_generator:
             # timedelta = np.random.poisson(600, 1)[0]
             # timedelta = np.random.binomial(1200, 0.5, 1)[0]
 
+        # asctime([tuple]) 将时间元组转换为字符串
         return starttime+"|"+str(timedelta)
 
     def gen_teltype(self):
@@ -145,14 +157,39 @@ class data_generator:
 
     def gen_type(self, pick_type_distribution, rate_type_distribution):
         type={
+            # "Business",
             0: "Business",
-            1: "Agency",
-            2: "Education",
-            3: "Scam",
-            4: "Health",
-            5: "AD"
+            1: "Banking",
+            2: "Financial agency",
+            3: "Job",
+
+            #  "Agency",
+            4: "Legal agency",
+            5: "Housekeeping and property management",
+
+            #  "Education",
+            6: "School",
+            7: "Extracurricular training camp",
+
+            # "Health",
+            8: "Hospital (including health care)",
+            9: "Clinic (including dentist)",
+
+            # "AD",
+            10: "Food (including takeaway)",
+            11: "Dress code (booking and buying)",
+            12: "Housing (including rental)",
+            13: "Traveling",
+
+            14: "Emergency",
+            # "Private",
+            15: "Private",
+            16: "Private",
+            17: "Private",
+            18: "Private",
+            19: "Private"
         }
-        r = random.randint(0, 5)
+        r = random.randint(0, 20)
         if(pick_type_distribution=="default"):
             return type.get(r)
 
@@ -168,7 +205,7 @@ class data_generator:
 
 class people:
     """
-    A unique people with 1-5 telephones makes several calls
+    A unique people telephones makes several calls
     """
     def __init__(self,ID=None,callnumber=None,calltimes=None,
                  callednumber=None, teltime=None, teltype=None, charge=None, result=None, type=None,
@@ -218,7 +255,7 @@ class people:
         return '+{}-{}-{}-{}'.format(str(place), first, second, last)
 
     def gen_calltimes(self):
-        return random.randint(1,5)
+        return random.randint(10,50)
 
     def gen_data(self,ID= None, callednumber=None, teltime=None, teltype=None, charge=None, result=None, type=None,
                  pick_type_distribution="default", rate_type_distribution=0.3,
@@ -238,7 +275,7 @@ class people:
 # test generate
 print("----------- test generate -----------")
 d1 = data_generator(ID=1)
-d2 = data_generator(pick_call_distribution="morning mode",pick_type_distribution="Education",rate_type_distribution=10)
+d2 = data_generator(pick_call_distribution="morning mode",pick_type_distribution="default",rate_type_distribution=10)
 print(d1)
 print(d2)
 print(d2.type)
