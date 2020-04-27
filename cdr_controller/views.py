@@ -8,7 +8,7 @@ from django_redis import get_redis_connection
 from . import data_generator
 
 data_generator_exit_flag = 0
-
+logger = logging.getLogger(__name__)
 
 class dataGenThread(threading.Thread):
     def __init__(self, pick_type_distribution, rate_type_distribution,
@@ -115,7 +115,7 @@ def data_gen_start(request):
     global thread1
     data_generator_exit_flag = 0
     thread1.start()
-    logging.info("Start data generator")
+    logger.info("Start data generator")
     return HttpResponse('Success')
 
 
@@ -126,5 +126,5 @@ def data_gen_stop(request):
     while (thread1.isAlive()):
         time.sleep(0.01)
         print('thread alive')
-    logging.info('thread killed')
+    logger.info('thread killed')
     return HttpResponse('Try to stop')
