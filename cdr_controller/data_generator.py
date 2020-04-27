@@ -238,15 +238,24 @@ class people:
                       pick_type_distribution, rate_type_distribution,
                       pick_call_distribution, delta_distribution,
                       rate_place_distribution)
+        self.save_in_redis()
 
     def __str__(self):
         fuldata = ""
         for i in range(self.calltimes):
             tempdata = str(self.ID) + "|" + str(self.callnumber) + "|" \
                        + (str(self.data[i]))
-            self.output_redis_1(self.data[i].ID, tempdata)
+            # self.output_redis_1(self.data[i].ID, tempdata)
             fuldata += tempdata + "\n"
         return fuldata
+
+    def save_in_redis(self):
+        for i in range(self.calltimes):
+            tempdata = str(self.ID) + "|" + str(self.callnumber) + "|" \
+                       + (str(self.data[i]))
+            self.output_redis_1(self.data[i].ID, tempdata)
+
+        return
 
     def gen_ID(self):
         return uuid.uuid1()
