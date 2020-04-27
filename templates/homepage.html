@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Homepage</title>
+</head>
+<!-- Custom fonts for this template-->
+<link href="{% static "fontawesome-free/css/all.min.css" %}"  rel="stylesheet"
+      type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+<!-- Custom styles for this template-->
+<link href="{% static "css/sb-admin-2.min.css" %}" rel="stylesheet">
+
+<body class="bg-gradient-primary">
+<!--<ul class="am-nav am-nav-pills am-nav-justify">-->
+    <!--<li class="am-active"><a href="#" class="am-icon-md">     Homepage</a></li>-->
+    <!--<li><a href="" class="am-icon-md">     Workload-->
+        <!--Generator</a></li>-->
+    <!--<li><a href="" class="am-icon-md">     Template-->
+        <!--Controller</a></li>-->
+    <!--<li><a href="" class="am-icon-md">     Plan-->
+        <!--Platform</a></li>-->
+<!--</ul>-->
+
+
+<div class="container">
+
+    <!-- Outer Row -->
+    <div class="row justify-content-center">
+
+        <div class="col-xl-10 col-lg-12 col-md-9">
+
+            <div class="card o-hidden border-0 shadow-lg my-5">
+                <div class="card-body p-0">
+                    <!-- Nested Row within Card Body -->
+                    <div class="row">
+                        <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                        <div class="col-lg-6">
+                            <div class="p-5">
+                                <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4">Welcome to CDR controller platform</h1>
+                                </div>
+
+                                <a href="{% url "index" %}" type="button"
+                                   class="btn btn-primary btn-user btn-block" onclick="gen_start()">
+                                    Start
+                                </a>
+                                <hr>
+                                <div class="text-center">
+                                    <p>Wenjie Chen (wc2685)</p>
+                                    <p>Chong Hu (ch3467)</p>
+                                    <p>Yanchen Liu (yl4189)</p>
+                                    <p>Jiajing Sun (js5504)</p>
+                                    <a href="https://github.com/JACKCHEN96/Large-Scale-Streaming-project">Github</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap core JavaScript-->
+
+<script src="{% static "jquery/jquery.min.js" %}"></script>
+<script src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{% static "jquery-easing/jquery.easing.min.js" %}"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="{% static "js/sb-admin-2.min.js" %}"></script>
+
+<!-- local scripts -->
+<script>
+function gen_start(){
+	var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/data_gen_start', true);
+    xhr.send(null);
+}
+</script>
+
+</body>
+</html>

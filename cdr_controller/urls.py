@@ -20,14 +20,15 @@ from . import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path(r'hello/', views.hello_world),
-    url(r'^admin/', admin.site.urls),
-    url(r'^/', views.index_view),
-    url(r'^page1$', views.page1_view),
-    url(r'^page2$', views.page2_view),
-    url(r'^show_info$', views.show_info),
+    url(r'hello/', views.hello_world),
+    url(r'admin/', admin.site.urls),
+    url(r'index/', views.index, name="index"),
+    url(r'page1/', views.page1_view),
+    url(r'page2/', views.page2_view),
+    url(r'show_info', views.show_info),
     url(r'^data_gen_test$', views.data_gen_test),
     url(r'^data_gen_test_get_res$', views.data_gen_test_get_res),
     url(r'^data_gen_start', views.data_gen_start),
     url(r'^data_gen_stop', views.data_gen_stop),
+    url(r'', views.homepage, name="homepage"),
 ]

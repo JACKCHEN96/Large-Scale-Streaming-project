@@ -1,5 +1,6 @@
 import threading
 import time
+import logging
 from django.http import HttpResponse
 from django.shortcuts import render
 from django_redis import get_redis_connection
@@ -44,8 +45,12 @@ def hello_world(request):
     return render(request, 'hello_world.html', {})
 
 
-def index_view(request):
-    return HttpResponse("index")
+def homepage(request):
+    return render(request, 'homepage.html', {})
+
+
+def index(request):
+    return render(request, 'index.html', {})
 
 
 def page1_view(request):
@@ -110,6 +115,7 @@ def data_gen_start(request):
     global thread1
     data_generator_exit_flag = 0
     thread1.start()
+    logging.info("Start data generator")
     return HttpResponse('Success')
 
 
@@ -120,5 +126,5 @@ def data_gen_stop(request):
     while (thread1.isAlive()):
         time.sleep(0.01)
         print('thread alive')
-    print('thread killed')
+    logging.info('thread killed')
     return HttpResponse('Try to stop')
