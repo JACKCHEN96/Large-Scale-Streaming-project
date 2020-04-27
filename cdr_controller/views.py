@@ -1,14 +1,17 @@
+import logging
 import threading
 import time
-import logging
+
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_protect
 from django_redis import get_redis_connection
 
 from . import data_generator
 
 data_generator_exit_flag = 0
 logger = logging.getLogger(__name__)
+
 
 class dataGenThread(threading.Thread):
     def __init__(self, pick_type_distribution, rate_type_distribution,
@@ -50,7 +53,37 @@ def homepage(request):
 
 
 def index(request):
+    global thread1
+    if not thread1.isAlive():
+        return render(request, 'homepage.html', {})
     return render(request, 'index.html', {})
+
+
+@csrf_protect
+def workload_generator(request):
+    global thread1
+    if not thread1.isAlive():
+        return render(request, 'homepage.html', {})
+    if request.method == 'POST':
+        data_gen_stop(request)
+        pick_type_distribution = request.POST['pick_type_distribution']
+        rate_type_distribution = float(request.POST['rate_type_distribution'])
+        pick_call_distribution = request.POST['pick_call_distribution']
+        delta_distribution = request.POST['delta_distribution']
+        rate_place_distribution = float(request.POST['rate_place_distribution'])
+
+        logger.info("Start updating workload generator ... ")
+        thread1 = dataGenThread(
+            pick_type_distribution=pick_type_distribution,
+            rate_type_distribution=rate_type_distribution,
+            pick_call_distribution=pick_call_distribution,
+            delta_distribution=delta_distribution,
+            rate_place_distribution=rate_place_distribution)
+        thread1.start()
+        logger.info("Update workload generator successfully! ")
+    elif request.method == 'GET':
+        pass
+    return render(request, 'workload_generator.html', {})
 
 
 def page1_view(request):
@@ -113,6 +146,11 @@ def data_gen_test_get_res(request):
 def data_gen_start(request):
     global data_generator_exit_flag
     global thread1
+    thread1 = dataGenThread(pick_type_distribution='default',
+                            rate_type_distribution=0.3,
+                            pick_call_distribution='default',
+                            delta_distribution='default',
+                            rate_place_distribution=0.7)
     data_generator_exit_flag = 0
     thread1.start()
     logger.info("Start data generator")

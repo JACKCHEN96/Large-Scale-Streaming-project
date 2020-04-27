@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'hello/', views.hello_world),
     url(r'admin/', admin.site.urls),
     url(r'index/', views.index, name="index"),
+    url(r'workload_generator', views.workload_generator, name="workload_generator"),
     url(r'page1/', views.page1_view),
     url(r'page2/', views.page2_view),
     url(r'show_info', views.show_info),
