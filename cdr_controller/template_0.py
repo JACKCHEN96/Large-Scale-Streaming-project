@@ -9,7 +9,7 @@ from pyspark.sql import SparkSession
 
 class template_0:
     """
-    The first template to analyze CRD
+    The first template to analyze CRD 
     """
     default_connect_info = {
         'host': 'localhost',
@@ -33,8 +33,8 @@ class template_0:
         len = 0
         key_list = []
         value_list = []
-        # print(r.pipeline())
         keys = rds.keys()
+
         for key in keys:
             key_list.append(key)
             pipe.get(key)
@@ -52,7 +52,6 @@ class template_0:
         spark = SparkSession.builder.appName('myApp').getOrCreate()
         sc = SparkContext.getOrCreate(SparkConf().setMaster("local[*]"))
 
-        # self.lines = sc.textFile("test_db_0.txt")
         self.lines = sc.parallelize(value_list)
 
     def __str__(self):
@@ -62,41 +61,22 @@ class template_0:
         """
         This function is to read n lines data from redis, then count the call time duration sum of every hour.
         """
-
-        # TODO. Drop all invalid data
-        # id_time_duration_np=ip_time_duration_np.filter((lambda x: x[0].replace(":","").isdigit()))
-        # id_time_duration=id_time_duration_np.filter(lambda x: x[-1].isdigit())
-
-
+        
         id_time_duration = self.lines.map(lambda x: (x.split("|")[2], x.split("|")[4], x.split("|")[5]))
+        
         print("Id_time_duration for all")
         print(id_time_duration.take(70))
         print("\n")
-        test_id_time_duration = id_time_duration.filter(lambda x: x[1].split("T")[1].split(":")[0] == '14')
-        test_id_duration = test_id_time_duration.map(lambda x: ("0", x[2]))
-        test_total = test_id_duration.reduceByKey(lambda x, y: int(x) + int(y))
-        print("0 'clock")
-        print(test_id_duration.take(70))
-        print("Total time")
-        print(test_total.take(50))
-        print("\n")
-        #
-        print("******************************************")
-        print(id_time_duration.take(20))
-        print("\n")
-        #
+
         for i in range(24):
             print("%d hour" % i)
-            temp_id_time_duration = id_time_duration.filter(lambda x: x[1].split("T")[1].split(":")[0] == "%d" % i)
+            temp_id_time_duration = id_time_duration.filter(lambda x: x[1].split(" ")[3].split(":")[0] == "%d" % i)
             temp_id_duration = temp_id_time_duration.map(lambda x: ("%d" % i, int(x[2])))
             temp_id_duration_total = temp_id_duration.reduceByKey(lambda x, y: int(x) + int(y))
             print(temp_id_duration_total.take(20))
             print("\n")
 
 
-
 test_temp_0=template_0()
 test_temp_0.count_duration(None)
-
-
 
