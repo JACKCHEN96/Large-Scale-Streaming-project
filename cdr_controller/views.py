@@ -4,7 +4,6 @@ import time
 
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_protect
 from django_redis import get_redis_connection
 
 from . import data_generator
@@ -59,7 +58,6 @@ def index(request):
     return render(request, 'index.html', {})
 
 
-@csrf_protect
 def workload_generator(request):
     global thread1
     if not thread1.isAlive():
