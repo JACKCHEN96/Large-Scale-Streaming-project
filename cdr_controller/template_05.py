@@ -2,14 +2,13 @@ __author__ = "Wenjie Chen"
 __email__ = "wc2685@columbia.edu"
 
 import redis
-from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
+from pyspark import SparkConf, SparkContext
 
-
-class template_3:
+class template_5:
     """
-    The third template to analyze the country of callednumber
+    The fifth template to count the call time duration sum of every hour of n lines 
     """
     default_connect_info = {
         'host': 'localhost',
@@ -64,7 +63,7 @@ class template_3:
         """
         This function is to read n lines data from redis, then count the call time duration sum of every hour.
         """
-        # Drop all invalid data. TODO
+
         people_calltime = self.lines.map(
             lambda x: (x.split("|")[0], x.split("|")[4]))
 
@@ -79,6 +78,7 @@ class template_3:
         people_calltime_d_count = people_calltime_d.reduceByKey(
             lambda x, y: x + y).map(
             lambda x: (x[0].split(":")[0], x[0].split(":")[1], x[1]))
+            
         # print(people_calltime.take(20))
         # print(people_calltime_w_count.take(20))
         # print(people_calltime_d_count.take(20))
@@ -98,6 +98,5 @@ class template_3:
         # ptest2=people_calltime_w_count.sortBy(lambda x: (x[0],-x[2],x[1]))
         # print(ptest2.take(50))
 
-
-test_temp_3 = template_3()
-test_temp_3.count_calltime(None)
+test_temp_5 = template_5()
+test_temp_5.count_calltime(None)
