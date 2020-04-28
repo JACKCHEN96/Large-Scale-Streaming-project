@@ -31,7 +31,7 @@ if __name__ == '__main__':
         while True:
             test()
             print(flag)
-            print(data)
+            # print(data)
             if flag != 0 and data != "":
                 try:
                     conn, addr = s0.accept()
