@@ -4,11 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Template 0</title>
+    <title>Template 1</title>
 
     <!-- Custom fonts for this template-->
     <link href="{% static "fontawesome-free/css/all.min.css" %}"
@@ -27,12 +26,10 @@
 <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
-        id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center"
-           href="{% url "index" %}">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url "index" %}">
             <div class="sidebar-brand-icon">
                 <i class="fas fa-fw fa-cog"></i>
             </div>
@@ -65,20 +62,16 @@
         </li>
         <!-- Nav Item - Templates Collapse Menu -->
         <li class="nav-item active">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse"
-               data-target="#collapseTwo" aria-expanded="true"
-               aria-controls="collapseTwo">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Templates</span>
             </a>
-            <div id="collapseTwo" class="collapse show"
-                 aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Custom Templates:</h6>
-                    <a class="collapse-item active"
-                       href="{% url "template0" %}">Template
+                    <a class="collapse-item" href="{% url "template0" %}">Template
                         0</a>
-                    <a class="collapse-item" href="{% url "template1" %}">Template
+                    <a class="collapse-item active" href="{% url "template1" %}">Template
                         1</a>
                     <a class="collapse-item" href="template_02.html">Template
                         2</a>
@@ -130,41 +123,38 @@
                 <div class="row">
 
                     <!-- Content Column -->
-                    <div class="col-sm-4 mb-4">
+                    <div class="col-lg-6 mb-4">
                         <!-- Project Card Example -->
                         <div class="card shadow mb-4 ">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">
-                                    Configuration</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Configuration</h6>
                             </div>
                             <div class="card-body">
                                 <form>
 
                                     <hr>
-                                    <button type="submit"
-                                            class="btn btn-primary btn-block">
-                                        Update
-                                    </button>
+                                    <button type="submit" class="btn btn-primary btn-block">Update</button>
                                 </form>
 
                             </div>
 
                         </div>
 
+
+
                     </div>
                     <!-- Content Column -->
 
-                    <div class="card col-lg-10 shadow mb-4">
+                    <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Bar
-                                Chart</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Bar Chart</h6>
                         </div>
                         <div class="card-body">
                             <div class="chart-bar">
                                 <canvas id="myBarChart"></canvas>
                             </div>
                             <hr>
-                            Sum of CDR for different time period
+                            Styling for the bar chart can be found in the <code>/js/demo/chart-bar-demo.js</code> file.
                         </div>
                     </div>
 
@@ -196,7 +186,6 @@
     <i class="fas fa-angle-up"></i>
 </a>
 
-
 <!-- Bootstrap core JavaScript-->
 <script src="{% static "jquery/jquery.min.js" %}"></script>
 <script src="{% static "bootstrap/js/bootstrap.bundle.min.js" %}"></script>
@@ -213,17 +202,6 @@
 <!-- Page level custom scripts -->
 <script src="{% static "js/demo/chart-area-demo.js" %}"></script>
 <script src="{% static "js/demo/chart-pie-demo.js" %}"></script>
-<script src="{% static "js/filters/chart-bar-hours.js" %}"></script>
-
-<script>
-    var label = {{ label | safe }};
-    var data = {{ data | safe }};
-    var ctx = document.getElementById("myBarChart");
-    var myBarChartHours = BarChartHours(ctx, label, data);
-
-    setInterval(function () {
-        updateChart(myBarChartHours)
-    }, 1500)
-</script>
+<script src="{% static "js/demo/chart-bar-demo.js" %}"></script>
 </body>
 </html>

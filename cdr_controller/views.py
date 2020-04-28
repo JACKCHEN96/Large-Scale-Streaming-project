@@ -1,7 +1,7 @@
+import json
 import logging
 import threading
 import time
-import json
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -104,11 +104,20 @@ def custom_template0(request):
     return render(request, 'filters/template_00.html', data)
 
 
+def custom_template1(request):
+    return render(request, 'filters/template_01.html', data)
+
+
+# data source
 def data_template0(request):
     data = {"label": ["0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00",
                       "7:00", "8:00", "9:00", "10:00", "11:00", "12:00"],
             "data": [13, 1234, 433, 1234, 1432, 433, 1234, 1432, 433, 1234,
                      1432, 193, 900]}
+    return HttpResponse(json.dumps(data))
+
+
+def data_template1(request):
     return HttpResponse(json.dumps(data))
 
 
