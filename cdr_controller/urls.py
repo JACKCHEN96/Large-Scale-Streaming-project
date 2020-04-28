@@ -36,8 +36,10 @@ urlpatterns = [
     # custom templates
     path(r"filters/template0", views.custom_template0, name="template0"),
     path(r"filters/template1", views.custom_template1, name="template1"),
+    path(r"filters/template3", views.custom_template3, name="template3"),
     # data source
     path(r"data/template0", views.data_template0),
     path(r"data/template1", views.data_template1),
+    path(r"data/template3", views.data_template3),
     url(r'', views.homepage, name="homepage"),
 ]

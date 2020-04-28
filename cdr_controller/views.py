@@ -98,12 +98,6 @@ data = {"label": ["0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00",
         "data": [1345, 1234, 433, 1234, 1432, 433, 1234, 1432, 433, 1234,
                  1432, 2193, 900]}
 
-
-# custom templates
-def custom_template0(request):
-    return render(request, 'filters/template_00.html', data)
-
-
 data2 = {"label": ['private',
                    'business',
                    'housing (including rental)',
@@ -124,10 +118,23 @@ data2 = {"label": ['private',
          "data": [19178, 3958, 3881, 3869, 3857, 3847, 3842, 3842, 3831, 3823,
                   3810, 3786, 3776, 3775, 3771, 3760, 3743]}
 
+data3 = {
+    "label": ['SC', 'ER', 'IO', 'TZ', 'CH', 'RU', 'CN', 'BW', 'CV', 'NG', 'AC',
+              'NO', 'CI', 'MZ', 'NE', 'ZW', 'KE', 'SS', 'LS', 'FR'],
+    "data": [235, 264, 255, 248, 237, 255, 216, 247, 254, 241, 235, 245, 239,
+             221, 247, 247, 243, 227, 185, 221]}
+
+
+# custom templates
+def custom_template0(request):
+    return render(request, 'filters/template_00.html', data)
+
 
 def custom_template1(request):
     return render(request, 'filters/template_01.html', data2)
 
+def custom_template3(request):
+    return render(request, 'filters/template_03.html', data3)
 
 # data source
 def data_template0(request):
@@ -137,6 +144,8 @@ def data_template0(request):
 def data_template1(request):
     return HttpResponse(json.dumps(data2))
 
+def data_template3(request):
+    return HttpResponse(json.dumps(data3))
 
 def show_info(request):
     html = '<div>' + "request method: " + request.method + '</div>'
