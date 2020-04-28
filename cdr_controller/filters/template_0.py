@@ -15,7 +15,7 @@ class template_0:
     The first template to analyze CRD 
     """
 
-    def __init__(self,IP="localhost",interval=10,port=6379):
+    def __init__(self,IP="localhost",interval=10,port=9000):
         self.IP=IP
         self.interval=interval
         self.port=port
@@ -42,6 +42,7 @@ class template_0:
         """
         
         id_time_duration = self.lines.map(lambda x: (x.split("|")[2], x.split("|")[4], x.split("|")[5]))
+        # id_time_duration.foreachRDD(lambda RDD: print(RDD.take(20)))
 
         for i in range(24):
             print("%d hour" % i)

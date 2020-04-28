@@ -2,59 +2,37 @@ __author__ = "Wenjie Chen"
 __email__ = "wc2685@columbia.edu"
 
 import redis
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import *
 from pyspark import SparkConf, SparkContext
+from pyspark.sql.functions import *
+from pyspark.sql import SparkSession
+from pyspark.streaming import StreamingContext
+
+rds_temp = redis.Redis(host='localhost', port=6379, decode_responses=True,
+                       db=6)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+
 
 class template_5:
     """
-    The fifth template to count the call time duration sum of every hour of n lines 
+    The fifth template to count the call time duration sum of every hour of n lines
     """
-    default_connect_info = {
-        'host': 'localhost',
-        'user': 'root',
-        'db': '0',
-        'port': 6379
-    }
 
-    def __init__(self, connect_info=None):
+    def __init__(self, IP="localhost", interval=10, port=6379):
+        self.IP = IP
+        self.interval = interval
+        self.port = port
 
-        self.connect_info = connect_info
-        if connect_info == None:
-            self.connect_info = self.default_connect_info
-
-        rds = redis.Redis(host=self.connect_info['host'],
-                          port=self.connect_info['port'],
-                          decode_responses=True,
-                          db=self.connect_info['db']
-                          )  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
-
-        pipe = rds.pipeline()
-        pipe_size = 100000
-        len = 0
-        key_list = []
-        value_list = []
-        # print(r.pipeline())
-        keys = rds.keys()
-        for key in keys:
-            key_list.append(key)
-            pipe.get(key)
-            if len < pipe_size:
-                len += 1
-            else:
-                for (k, v) in zip(key_list, pipe.execute()):
-                    print(k, v)
-                len = 0
-                key_list = []
-
-        for (k, v) in zip(key_list, pipe.execute()):
-            value_list.append(str(v))  # value_list
-
+        # create spark context
         spark = SparkSession.builder.appName('myApp').getOrCreate()
         sc = SparkContext.getOrCreate(SparkConf().setMaster("local[*]"))
 
-        self.lines = sc.parallelize(value_list)
-        # print('show value list',value_list)
+        # create sql context, used for saving rdd
+        sql_context = SparkSession(sc)
+
+        # create the Streaming Context from the above spark context with batch interval size (seconds)
+        ssc = StreamingContext(sc, self.interval)
+
+        # read data from port
+        self.lines = ssc.socketTextStream(self.IP, self.port)
 
     def __str__(self):
         pass
@@ -78,25 +56,34 @@ class template_5:
         people_calltime_d_count = people_calltime_d.reduceByKey(
             lambda x, y: x + y).map(
             lambda x: (x[0].split(":")[0], x[0].split(":")[1], x[1]))
-            
+
         # print(people_calltime.take(20))
         # print(people_calltime_w_count.take(20))
         # print(people_calltime_d_count.take(20))
 
-        people_w = people_calltime_w_count.sortBy(
-            lambda x: (x[0], -x[2], x[1])).map(
-            lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x)
-        people_d = people_calltime_d_count.sortBy(
-            lambda x: (x[0], -x[2], x[1])).map(
-            lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x)
+        def save_rdd_1(rdd):
+            if not rdd.isEmpty():
+                df1 = rdd.sortBy(lambda x: (x[0], -x[2], x[1])) \
+                    .map(lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x) \
+                    .toDF()
+                # df.show()
+                df1.write.format("org.apache.spark.sql.redis").option("table", "counts_5_1").option("key.column",
+                                                                                                    "_1").save(
+                    mode='overwrite')
 
-        print(people_w.take(20))
-        print(people_d.take(20))
+        def save_rdd_2(rdd):
+            if not rdd.isEmpty():
+                df2 = rdd.sortBy(lambda x: (x[0], -x[2], x[1])) \
+                    .map(lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x) \
+                    .toDF()
+                # df.show()
+                df2.write.format("org.apache.spark.sql.redis").option("table", "counts_5_2").option("key.column",
+                                                                                                    "_1").save(
+                    mode='overwrite')
 
-        # ptest=people_calltime.map(lambda x:(x[0],1)).reduceByKey(lambda x,y:x+y)
-        # print(ptest.take(20))
-        # ptest2=people_calltime_w_count.sortBy(lambda x: (x[0],-x[2],x[1]))
-        # print(ptest2.take(50))
+        people_calltime_w_count.foreachRDD(save_rdd_1)
+        people_calltime_d_count.foreachRDD(save_rdd_2)
+
 
 test_temp_5 = template_5()
 test_temp_5.count_calltime(None)
