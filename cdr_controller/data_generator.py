@@ -13,9 +13,9 @@ from phonenumbers.phonenumberutil import region_code_for_country_code
 # f1=faker.Factory
 rds = redis.Redis(host='localhost', port=6379, decode_responses=True,
                   db=0)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
-rds_type = redis.Redis(host='localhost', port=6379, decode_responses=True, db=1)
-rds_type_2 = redis.Redis(host='localhost', port=6379, decode_responses=True,
-                         db=2)
+# rds_type = redis.Redis(host='localhost', port=6379, decode_responses=True, db=1)
+# rds_type_2 = redis.Redis(host='localhost', port=6379, decode_responses=True,
+#                          db=2)
 cur_t = time()
 
 class data_generator:
@@ -220,7 +220,8 @@ class data_generator:
         return type.get(r)
 
     def output_redis_2(self):
-        rds_type.set(str(self.callednumber), str(self.type))
+        # rds_type.set(str(self.callednumber), str(self.type))
+        rds.lpush('type',str(self.callednumber)+str(self.type))
 
 
 class people:
@@ -304,22 +305,23 @@ class people:
             self.data.append(data_generator_temp)
 
     def output_redis_1(self, ID, tempdata):
-        rds.set(str(ID), str(tempdata))
+        #rds.set(str(ID), str(tempdata))
+        rds.lpush('ID',str(ID)+'|'+str(tempdata))
 
 
 # test generate
-print("----------- test generate -----------")
-d1 = data_generator(ID=1)
-d2 = data_generator(pick_call_distribution="morning mode",
-                    pick_type_distribution="default", rate_type_distribution=10)
-print(d1)
-print(d2)
-print(d2.type)
+# print("----------- test generate -----------")
+# d1 = data_generator(ID=1)
+# d2 = data_generator(pick_call_distribution="morning mode",
+#                     pick_type_distribution="default", rate_type_distribution=10)
+# print(d1)
+# print(d2)
+# print(d2.type)
 
-# test people
-print("------------ test people ------------")
-p1 = people()
-print(p1)
+# # test people
+# print("------------ test people ------------")
+# p1 = people()
+# print(p1)
 
 # # test iterate redis datas
 # print("-------------- test iterate redis data --------------")
