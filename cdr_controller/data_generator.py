@@ -13,9 +13,7 @@ from phonenumbers.phonenumberutil import region_code_for_country_code
 # f1=faker.Factory
 rds = redis.Redis(host='localhost', port=6379, decode_responses=True,
                   db=0)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
-# rds_type = redis.Redis(host='localhost', port=6379, decode_responses=True, db=1)
-# rds_type_2 = redis.Redis(host='localhost', port=6379, decode_responses=True,
-#                          db=2)
+
 cur_t = time()
 
 class data_generator:
@@ -220,8 +218,8 @@ class data_generator:
         return type.get(r)
 
     def output_redis_2(self):
-        # rds_type.set(str(self.callednumber), str(self.type))
-        rds.lpush('type',str(self.callednumber)+str(self.type))
+        rds.set(str(self.callednumber), str(self.type))
+        # rds.lpush('type',str(self.callednumber)+str(self.type))
 
 
 class people:
