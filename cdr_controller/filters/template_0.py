@@ -51,24 +51,16 @@ class template_0:
         This function is to read n lines data from redis, then count the call time duration sum of every hour.
         """
         
-        id_time_duration = self.lines.map(lambda x: (x.split("|")[2], x.split("|")[4], x.split("|")[5]))
-
-        # 3333333
-        # print("\n")
-        id_time_duration.pprint()
-
-
-        # 4444444
-        # id_time_duration.foreachRDD(lambda RDD: print(RDD.take(20)))
-
+        id_time_duration = self.lines.map((lambda x: (x.split("|")[2], x.split("|")[4], x.split("|")[5])))
 
         for i in range(24):
-            print("%d hour" % i)
-            temp_id_time_duration = id_time_duration.filter(lambda x: x[1].split(" ")[3].split(":")[0] == "%d" % i)
+            # print("%d hour" % i)
+            # temp_id_time_duration = id_time_duration.filter(lambda x: x[1].split(" ")[3].split(":")[0] == "%d" % i)
+            temp_id_time_duration = id_time_duration.filter(lambda x: int(x[1].split(" ")[3].split(":")[0]) == i)
             temp_id_duration = temp_id_time_duration.map(lambda x: ("%d" % i, int(x[2])))
             temp_id_duration_total = temp_id_duration.reduceByKey(lambda x, y: int(x) + int(y))
-
             temp_id_duration_total.pprint()
+            #
 
             # temp_id_duration_total.map(lambda x: int(x[1]))\
             #     .foreachRDD(lambda RDD: rds_temp.set("%d" % i,str(RDD.collect()[0])) if RDD.collect() else rds_temp.set("%d" % i, "0"))
