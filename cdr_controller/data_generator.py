@@ -91,14 +91,25 @@ class data_generator:
 
         # mktime(tuple)讲时间元组转换为本地时间
         # 日期元组说明：年，月，日，时，分，秒，周，儒历日，夏令时
-        date1 = (2018, 1, 1, 0, 0, 0, -1, -1, -1)
-        time1 = mktime(date1)
-        date2 = (2020, 1, 1, 0, 0, 0, -1, -1, -1)
-        time2 = mktime(date2)
+        # date1 = (2018, 1, 1, 0, 0, 0, -1, -1, -1)
+        # time1 = mktime(date1)
+        # date2 = (2020, 1, 1, 0, 0, 0, -1, -1, -1)
+        # time2 = mktime(date2)
         # 在这一范围内生成随机数
         # starttime = uniform(time1, time2)
         # localtime(seconds)将秒数转换为日期元组
         # 打印例子：Wed Feb 24 05:29:22 2016
+
+        # a*delta_now=delta_past
+        # 3 month to 12 min, so a=133920
+        cur_t = time()
+        # startt is the real world start time
+        # pastt is the virturl start time you want to set (2016.1.1)
+        startt = 1588035275
+        pastt=1451624400
+        b = 133920 * startt - pastt
+        time1 = cur_t * 133920 - b
+        time2 = time1 + 133920
 
         if (call_distribution == "midnight mode"):
             # TODO
