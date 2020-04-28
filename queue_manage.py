@@ -36,6 +36,5 @@ if __name__ == '__main__':
             print('send')
         else:
             print('wait')
-    except KeyboardInterrupt:
-        exit
+
 

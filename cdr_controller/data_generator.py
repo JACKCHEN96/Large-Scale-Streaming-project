@@ -307,7 +307,7 @@ class people:
 
     def output_redis_1(self, ID, tempdata):
         #rds.set(str(ID), str(tempdata))
-        rds.lpush('ID',str(ID)+'|'+str(tempdata))
+        rds.lpush('ID',str(tempdata))
 
 
 p1=people()
