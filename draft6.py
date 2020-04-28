@@ -27,15 +27,27 @@ id_time_duration = lines.map((lambda x: (x.split("|")[2], x.split("|")[4], x.spl
 # id_time_duration.pprint()
 
 # 222222222
-temp_id_time_duration = id_time_duration.filter(lambda x: 0 if len(x)<2 else x[1].split(" ")[3].split(":")[0] == "01")
-# temp_id_time_duration.pprint()
 
 
-# ----------------------------------------------------------------------------
-temp_id_duration = temp_id_time_duration.map(lambda x: (0, int(x[2])))
+# temp_id_time_duration = id_time_duration.filter(lambda x: 0 if len(x)<2 else int(x[1].split(" ")[3].split(":")[0]) == 1)
+# # temp_id_time_duration.pprint()
+# # ----------------------------------------------------------------------------
+# temp_id_duration = temp_id_time_duration.map(lambda x: (0, int(x[2])))
+# temp_id_duration_total = temp_id_duration.reduceByKey(lambda x, y: int(x) + int(y))
+i=1
+temp_id_time_duration = id_time_duration.filter(lambda x: int(x[1].split(" ")[3].split(":")[0]) == i)
+
+temp_id_duration = temp_id_time_duration.map(lambda x: ("%d" % i, int(x[2])))
 temp_id_duration_total = temp_id_duration.reduceByKey(lambda x, y: int(x) + int(y))
-#
-#
+
+temp_id_duration_total.pprint()
+# ////////////
+i=4
+temp_id_time_duration = id_time_duration.filter(lambda x: int(x[1].split(" ")[3].split(":")[0]) == i)
+
+temp_id_duration = temp_id_time_duration.map(lambda x: ("%d" % i, int(x[2])))
+temp_id_duration_total = temp_id_duration.reduceByKey(lambda x, y: int(x) + int(y))
+
 temp_id_duration_total.pprint()
 
 ssc.start()
