@@ -40,6 +40,7 @@ if __name__ == '__main__':
                 else:
                     print(addr)
                     conn.sendall(bytes(data, 'utf-8'))
+                    flag = 0
                     print('send')
             else:
                 print('wait')
