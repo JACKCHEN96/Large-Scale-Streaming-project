@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Template 1</title>
@@ -26,10 +27,12 @@
 <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url "index" %}">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center"
+           href="{% url "index" %}">
             <div class="sidebar-brand-icon">
                 <i class="fas fa-fw fa-cog"></i>
             </div>
@@ -62,16 +65,20 @@
         </li>
         <!-- Nav Item - Templates Collapse Menu -->
         <li class="nav-item active">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse"
+               data-target="#collapseTwo" aria-expanded="true"
+               aria-controls="collapseTwo">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Templates</span>
             </a>
-            <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div id="collapseTwo" class="collapse show"
+                 aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Custom Templates:</h6>
                     <a class="collapse-item" href="{% url "template0" %}">Template
                         0</a>
-                    <a class="collapse-item active" href="{% url "template1" %}">Template
+                    <a class="collapse-item active"
+                       href="{% url "template1" %}">Template
                         1</a>
                     <a class="collapse-item" href="template_02.html">Template
                         2</a>
@@ -115,46 +122,37 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Template 0</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Template 1</h1>
                 </div>
 
 
                 <!-- Content Row -->
                 <div class="row">
+                    <!-- Pie Chart -->
+                    <div class="col-lg-8 ">
+                        <div class="card shadow mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    CDR Type distribution</h6>
+                                <div class="dropdown no-arrow">
+                                    <a class="dropdown-toggle" href="#"
+                                       role="button" id="dropdownMenuLink"
+                                       data-toggle="dropdown"
+                                       aria-haspopup="true"
+                                       aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                    </a>
 
-                    <!-- Content Column -->
-                    <div class="col-lg-6 mb-4">
-                        <!-- Project Card Example -->
-                        <div class="card shadow mb-4 ">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Configuration</h6>
+                                </div>
                             </div>
+                            <!-- Card Body -->
                             <div class="card-body">
-                                <form>
-
-                                    <hr>
-                                    <button type="submit" class="btn btn-primary btn-block">Update</button>
-                                </form>
+                                <div class="chart-pie">
+                                    <canvas id="myPieChart"></canvas>
+                                </div>
 
                             </div>
-
-                        </div>
-
-
-
-                    </div>
-                    <!-- Content Column -->
-
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Bar Chart</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-bar">
-                                <canvas id="myBarChart"></canvas>
-                            </div>
-                            <hr>
-                            Styling for the bar chart can be found in the <code>/js/demo/chart-bar-demo.js</code> file.
                         </div>
                     </div>
 
@@ -201,7 +199,28 @@
 
 <!-- Page level custom scripts -->
 <script src="{% static "js/demo/chart-area-demo.js" %}"></script>
-<script src="{% static "js/demo/chart-pie-demo.js" %}"></script>
+<script src="{% static "js/filters/chart-pie-type.js" %}"></script>
 <script src="{% static "js/demo/chart-bar-demo.js" %}"></script>
+<script src="{% static "js/palette.js" %}"></script>
+
+<script>
+    var label = {{ label | safe }};
+    var data = {{ data | safe }};
+    var ctx = document.getElementById("myPieChart");
+    const gradientStroke = ctx.getContext("2d").createLinearGradient(300, 0, 100, 0);
+    gradientStroke.addColorStop(0, "#3838f4");
+    gradientStroke.addColorStop(0.2, "#0cd94d");
+    gradientStroke.addColorStop(0.5, "#f3fa11");
+    gradientStroke.addColorStop(1, "#f40f50");
+    var seq = palette("tol-rainbow", data.length).map(function(hex) {
+        return '#' + hex;
+      });
+    var myPieChartType = PieChartType(ctx, label, data, seq);
+
+
+    setInterval(function () {
+        updateChart(myPieChartType, seq)
+    }, 1500)
+</script>
 </body>
 </html>
