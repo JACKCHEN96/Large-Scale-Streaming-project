@@ -10,10 +10,10 @@ flag = 0
 
 def test():
     global flag, data
-    if rds.llen('ID') != 0 and flag == 0:
+    if rds.llen('ID') > 100 and flag == 0:
         data = ""
-        l = rds.llen('ID')
-        for i in range(l):
+        # l = rds.llen('ID')
+        for i in range(100):
             t = rds.rpop('ID')
             data += t
             data += '\n'
