@@ -57,7 +57,7 @@ function getColors(length) {
     return colors;
 }
 
-function updateChart(myChart, color) {
+function updatePieChartType(myChart, color) {
     var xmlhttp;
     if (window.XMLHttpRequest) {
         // IE7+, Firefox, Chrome, Opera, Safari

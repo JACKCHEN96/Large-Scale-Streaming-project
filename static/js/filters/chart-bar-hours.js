@@ -117,7 +117,7 @@ function BarChartHours(ctx, label, data) {
 }
 
 
-function updateChart(myChart) {
+function updateBarChartHours(myChart) {
     var xmlhttp;
     if (window.XMLHttpRequest) {
         // IE7+, Firefox, Chrome, Opera, Safari

@@ -53,10 +53,14 @@ def homepage(request):
 
 
 def index(request):
-    global thread1
-    if not thread1.isAlive():
-        return render(request, 'homepage.html', {})
-    return render(request, 'index.html', {})
+    # global thread1
+    # if not thread1.isAlive():
+    #     return render(request, 'homepage.html', {})
+
+    data = {"chartBarHours": data1,
+            "chartPieType": data2,
+            "chartBarInternational": data3}
+    return render(request, 'index.html', data)
 
 
 def workload_generator(request):
@@ -93,10 +97,10 @@ def page2_view(request):
     return HttpResponse("page2")
 
 
-data = {"label": ["0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00",
-                  "7:00", "8:00", "9:00", "10:00", "11:00", "12:00"],
-        "data": [1345, 1234, 433, 1234, 1432, 433, 1234, 1432, 433, 1234,
-                 1432, 2193, 900]}
+data1 = {"label": ["0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00",
+                   "7:00", "8:00", "9:00", "10:00", "11:00", "12:00"],
+         "data": [1345, 1234, 433, 1234, 1432, 433, 1234, 1432, 433, 1234,
+                  1432, 2193, 900]}
 
 data2 = {"label": ['private',
                    'business',
@@ -127,25 +131,29 @@ data3 = {
 
 # custom templates
 def custom_template0(request):
-    return render(request, 'filters/template_00.html', data)
+    return render(request, 'filters/template_00.html', data1)
 
 
 def custom_template1(request):
     return render(request, 'filters/template_01.html', data2)
 
+
 def custom_template3(request):
     return render(request, 'filters/template_03.html', data3)
 
+
 # data source
 def data_template0(request):
-    return HttpResponse(json.dumps(data))
+    return HttpResponse(json.dumps(data1))
 
 
 def data_template1(request):
     return HttpResponse(json.dumps(data2))
 
+
 def data_template3(request):
     return HttpResponse(json.dumps(data3))
+
 
 def show_info(request):
     html = '<div>' + "request method: " + request.method + '</div>'
