@@ -16,7 +16,7 @@ rds = redis.Redis(host='localhost', port=6379, decode_responses=True,
 rds_type = redis.Redis(host='localhost', port=6379, decode_responses=True, db=1)
 rds_type_2 = redis.Redis(host='localhost', port=6379, decode_responses=True,
                          db=2)
-
+cur_t = time()
 
 class data_generator:
     """
@@ -102,7 +102,7 @@ class data_generator:
 
         # a*delta_now=delta_past
         # 3 month to 12 min, so a=133920
-        cur_t = time()
+
         # startt is the real world start time
         # pastt is the virturl start time you want to set (2016.1.1)
         startt = 1588035275
@@ -115,25 +115,25 @@ class data_generator:
             # TODO
             # starttime = uniform(time1, time2)
             starttime = asctime(localtime(uniform(time1, time2)))
-            while (starttime.split(" ")[3].split(":")[0] > "6" and i < 4):
+            while ((starttime.split(" ")[3].split(":")[0] > "6") and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "morning mode"):
             # TODO
             starttime = asctime(localtime(uniform(time1, time2)))
-            while (starttime.split(" ")[3].split(":")[0] > "12" or
-                   starttime.split(" ")[3].split(":")[0] < "6" and i < 4):
+            while ((starttime.split(" ")[3].split(":")[0] > "12" or
+                   starttime.split(" ")[3].split(":")[0] < "6") and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "afternoon mode"):
             starttime = asctime(localtime(uniform(time1, time2)))
-            while (starttime.split(" ")[3].split(":")[0] > "18" or
-                   starttime.split(" ")[3].split(":")[0] < "12" and i < 4):
+            while ((starttime.split(" ")[3].split(":")[0] > "18" or
+                   starttime.split(" ")[3].split(":")[0] < "12") and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "evening mode"):
             starttime = asctime(localtime(uniform(time1, time2)))
-            while (starttime.split(" ")[3].split(":")[0] < "18" and i < 4):
+            while ((starttime.split(" ")[3].split(":")[0] < "18") and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         else:
