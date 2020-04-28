@@ -14,6 +14,9 @@ from phonenumbers.phonenumberutil import region_code_for_country_code
 rds = redis.Redis(host='localhost', port=6379, decode_responses=True,
                   db=0)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
 
+rds1 = redis.Redis(host='localhost', port=6379, decode_responses=True,
+                  db=1)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+
 cur_t = time()
 
 class data_generator:
@@ -218,7 +221,7 @@ class data_generator:
         return type.get(r)
 
     def output_redis_2(self):
-        rds.set(str(self.callednumber), str(self.type))
+        rds1.set(str(self.callednumber), str(self.type))
         # rds.lpush('type',str(self.callednumber)+str(self.type))
 
 
@@ -307,6 +310,7 @@ class people:
         rds.lpush('ID',str(ID)+'|'+str(tempdata))
 
 
+p1=people()
 # test generate
 # print("----------- test generate -----------")
 # d1 = data_generator(ID=1)
