@@ -7,7 +7,6 @@ import threading
 rds = redis.Redis(host='localhost', port=6379, decode_responses=True, db=0)
 data = ""
 flag = 0
-addr_list = []
 
 def test():
     global flag, data
@@ -26,24 +25,17 @@ def test():
 if __name__ == '__main__':
     s0 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s0.bind(('localhost', 9000))
-    try:
-        s0.listen(5)
-        while True:
-            test()
-            print(flag)
-            print(data)
-            if flag != 0 and data != "":
-                try:
-                    conn, addr = s0.accept()
-                except OSError:
-                    print("Nothing")
-                else:
-                    print(addr)
-                    conn.sendall(bytes(data, 'utf-8'))
-                    flag = 0
-                    print('send')
-            else:
-                print('wait')
+    s0.listen(5)
+    conn, addr = s0.accept()
+    while True:
+        test()
+        print(flag)
+        if flag != 0 and data != "":
+            conn.sendall(bytes(data, 'utf-8'))
+            flag = 0
+            print('send')
+        else:
+            print('wait')
     except KeyboardInterrupt:
         exit
 
