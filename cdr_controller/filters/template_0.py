@@ -33,7 +33,6 @@ class template_0:
         # read data from port
         self.lines = ssc.socketTextStream(self.IP, self.port)
 
-
     def __str__(self):
         pass
 
@@ -49,11 +48,16 @@ class template_0:
             temp_id_time_duration = id_time_duration.filter(lambda x: x[1].split(" ")[3].split(":")[0] == "%d" % i)
             temp_id_duration = temp_id_time_duration.map(lambda x: ("%d" % i, int(x[2])))
             temp_id_duration_total = temp_id_duration.reduceByKey(lambda x, y: int(x) + int(y))
-            print(temp_id_duration_total.map(lambda x: int(x[1])).collect())
-            if temp_id_duration_total.map(lambda x: int(x[1])).collect():
-                rds_temp.set("%d" % i, str(temp_id_duration_total.map(lambda x: int(x[1])).collect()[0]))
-            else:
-                rds_temp.set("%d" % i, "0")
+
+            temp_id_duration_total.map(lambda x: int(x[1]))\
+                .foreachRDD(lambda RDD: rds_temp.set("%d" % i,str(RDD.collect()[0])) if RDD.collect() else rds_temp.set("%d" % i, "0"))
+
+            # print(temp_id_duration_total.map(lambda x: int(x[1])).collect())
+            # print(temp_id_duration_total.map(lambda x: int(x[1])))
+            # if temp_id_duration_total.map(lambda x: int(x[1])).collect():
+            #     rds_temp.set("%d" % i, str(temp_id_duration_total.map(lambda x: int(x[1])).collect()[0]))
+            # else:
+            #     rds_temp.set("%d" % i, "0")
 
 
 
