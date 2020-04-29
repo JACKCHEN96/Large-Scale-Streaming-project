@@ -30,8 +30,6 @@ urlpatterns = [
     url(r'page2/', views.page2_view),
     url(r'plan_platform', views.plan_platform, name="plan_platform"),
     url(r'show_info', views.show_info),
-    url(r'^data_gen_test$', views.data_gen_test),
-    url(r'^data_gen_test_get_res$', views.data_gen_test_get_res),
     url(r'^data_gen_start', views.data_gen_start),
     url(r'^data_gen_stop', views.data_gen_stop),
     # custom templates

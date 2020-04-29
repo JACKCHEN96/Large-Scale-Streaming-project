@@ -13,10 +13,11 @@ from phonenumbers.phonenumberutil import region_code_for_country_code
 # f1=faker.Factory
 rds = redis.Redis(host='localhost', port=6379, decode_responses=True,
                   db=0)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
-rds_type = redis.Redis(host='localhost', port=6379, decode_responses=True, db=1)
-rds_type_2 = redis.Redis(host='localhost', port=6379, decode_responses=True,
-                         db=2)
 
+rds1 = redis.Redis(host='localhost', port=6379, decode_responses=True,
+                  db=1)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+
+cur_t = time()
 
 class data_generator:
     """
@@ -91,38 +92,49 @@ class data_generator:
 
         # mktime(tuple)讲时间元组转换为本地时间
         # 日期元组说明：年，月，日，时，分，秒，周，儒历日，夏令时
-        date1 = (2018, 1, 1, 0, 0, 0, -1, -1, -1)
-        time1 = mktime(date1)
-        date2 = (2020, 1, 1, 0, 0, 0, -1, -1, -1)
-        time2 = mktime(date2)
+        # date1 = (2018, 1, 1, 0, 0, 0, -1, -1, -1)
+        # time1 = mktime(date1)
+        # date2 = (2020, 1, 1, 0, 0, 0, -1, -1, -1)
+        # time2 = mktime(date2)
         # 在这一范围内生成随机数
         # starttime = uniform(time1, time2)
         # localtime(seconds)将秒数转换为日期元组
         # 打印例子：Wed Feb 24 05:29:22 2016
 
+        # a*delta_now=delta_past
+        # 3 month to 12 min, so a=133920
+
+        # startt is the real world start time
+        # pastt is the virturl start time you want to set (2016.1.1)
+        startt = 1588035275
+        pastt=1451624400
+        b = 133920 * startt - pastt
+        time1 = cur_t * 133920 - b
+        time2 = time1 + 133920
+
         if (call_distribution == "midnight mode"):
             # TODO
             # starttime = uniform(time1, time2)
             starttime = asctime(localtime(uniform(time1, time2)))
-            while (starttime.split(" ")[3].split(":")[0] > "6" and i < 4):
+            while ((starttime.split(" ")[3].split(":")[0] > "6") and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "morning mode"):
             # TODO
             starttime = asctime(localtime(uniform(time1, time2)))
-            while (starttime.split(" ")[3].split(":")[0] > "12" or
-                   starttime.split(" ")[3].split(":")[0] < "6" and i < 4):
+            while ((starttime.split(" ")[3].split(":")[0] > "12" or
+                   starttime.split(" ")[3].split(":")[0] < "6") and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "afternoon mode"):
             starttime = asctime(localtime(uniform(time1, time2)))
-            while (starttime.split(" ")[3].split(":")[0] > "18" or
-                   starttime.split(" ")[3].split(":")[0] < "12" and i < 4):
+            while ((starttime.split(" ")[3].split(":")[0] > "18" or
+                   starttime.split(" ")[3].split(":")[0] < "12") and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "evening mode"):
             starttime = asctime(localtime(uniform(time1, time2)))
-            while (starttime.split(" ")[3].split(":")[0] < "18" and i < 4):
+            while ((starttime.split(" ")[3].split(":")[0] < "18") and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         else:
@@ -209,7 +221,8 @@ class data_generator:
         return type.get(r)
 
     def output_redis_2(self):
-        rds_type.set(str(self.callednumber), str(self.type))
+        rds1.set(str(self.callednumber), str(self.type))
+        # rds.lpush('type',str(self.callednumber)+str(self.type))
 
 
 class people:
@@ -293,22 +306,28 @@ class people:
             self.data.append(data_generator_temp)
 
     def output_redis_1(self, ID, tempdata):
-        rds.set(str(ID), str(tempdata))
+        #rds.set(str(ID), str(tempdata))
+        rds.lpush('ID_0',str(tempdata))
+        rds.lpush('ID_01',str(tempdata))
+        rds.lpush('ID_02',str(tempdata))
+        rds.lpush('ID_03',str(tempdata))
+        rds.lpush('ID_05',str(tempdata))
 
 
+p1=people()
 # test generate
-print("----------- test generate -----------")
-d1 = data_generator(ID=1)
-d2 = data_generator(pick_call_distribution="morning mode",
-                    pick_type_distribution="default", rate_type_distribution=10)
-print(d1)
-print(d2)
-print(d2.type)
+# print("----------- test generate -----------")
+# d1 = data_generator(ID=1)
+# d2 = data_generator(pick_call_distribution="morning mode",
+#                     pick_type_distribution="default", rate_type_distribution=10)
+# print(d1)
+# print(d2)
+# print(d2.type)
 
-# test people
-print("------------ test people ------------")
-p1 = people()
-print(p1)
+# # test people
+# print("------------ test people ------------")
+# p1 = people()
+# print(p1)
 
 # # test iterate redis datas
 # print("-------------- test iterate redis data --------------")
