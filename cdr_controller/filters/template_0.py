@@ -6,20 +6,9 @@ from pyspark import SparkConf, SparkContext
 from pyspark.sql.functions import *
 from pyspark.sql import SparkSession
 from pyspark.streaming import StreamingContext
+from multiprocessing import Process
 import time
 
-# rds_temp = redis.Redis(host='localhost', port=6379, decode_responses=True,
-#                   db=6)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
-
-# create spark context
-spark = SparkSession.builder.appName('myApp').getOrCreate()
-sc = SparkContext.getOrCreate(SparkConf().setMaster("local[*]"))
-
-# create sql context, used for saving rdd
-sql_context = SparkSession(sc)
-
-# create the Streaming Context from the above spark context with batch interval size (seconds)
-ssc = StreamingContext(sc, 10)
 
 
 class template_0:
@@ -28,6 +17,15 @@ class template_0:
     """
 
     def __init__(self,IP="localhost",interval=10,port=9000):
+        # create spark context
+        self.spark = SparkSession.builder.appName('template0').getOrCreate()
+        self.sc = SparkContext.getOrCreate(SparkConf().setMaster("local"))
+
+        # create sql context, used for saving rdd
+        self.sql_context = SparkSession(self.sc)
+
+        # create the Streaming Context from the above spark context with batch interval size (seconds)
+        self.ssc = StreamingContext(self.sc, 10)
         self.IP=IP
         self.interval=interval
         self.port=port
@@ -35,7 +33,7 @@ class template_0:
 
         # read data from port
 
-        self.lines = ssc.socketTextStream(self.IP, self.port)
+        self.lines = self.ssc.socketTextStream(self.IP, self.port)
 
         # 11111111
         # self.lines.foreachRDD(lambda rdd: print(rdd.take(20)))
@@ -211,7 +209,7 @@ class template_0:
             .union(temp_id_duration_total5)
 
         temp_midnight_total.pprint()
-        temp_midnight_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_midnight.json"))
+        temp_midnight_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_midnight.json") if not rdd.isEmpty() else None)
 
         temp_morning_total=temp_id_duration_total6\
             .union(temp_id_duration_total7)\
@@ -221,7 +219,7 @@ class template_0:
             .union(temp_id_duration_total11)
 
         temp_morning_total.pprint()
-        temp_morning_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_morning.json"))
+        temp_morning_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_morning.json") if not rdd.isEmpty() else None)
 
         temp_afternoon_total=temp_id_duration_total12\
             .union(temp_id_duration_total13)\
@@ -231,7 +229,7 @@ class template_0:
             .union(temp_id_duration_total17)
 
         temp_afternoon_total.pprint()
-        temp_afternoon_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_afternoon.json"))
+        temp_afternoon_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_afternoon.json") if not rdd.isEmpty() else None)
 
         temp_evening_total=temp_id_duration_total18\
             .union(temp_id_duration_total19)\
@@ -241,17 +239,21 @@ class template_0:
             .union(temp_id_duration_total23)
 
         temp_evening_total.pprint()
-        temp_evening_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_evening.json"))
+        temp_evening_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_evening.json") if not rdd.isEmpty() else None)
 
 # eeeeeeee fe fe fef fefe
 def template_0_main():
-    global ssc
-    test_temp_0=template_0(IP="localhost",port=9000)
+    test_temp_0=template_0(IP="localhost", port=9000)
     test_temp_0.count_duration(None)
 
-    ssc.start()
+    test_temp_0.ssc.start()
+    print("Start process 0 for template 0")
     time.sleep(60)
-    ssc.stop(stopSparkContext=False, stopGraceFully=True)
+    test_temp_0.ssc.stop(stopSparkContext=False, stopGraceFully=True)
+    # test_temp_0.ssc.awaitTermination() # used for real time
 
 if __name__ == '__main__':
-    template_0_main()
+    p0 = Process(target=template_0_main)
+    p0.start()
+    print("Wait for terminated")
+    p0.join()
