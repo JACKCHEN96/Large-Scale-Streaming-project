@@ -1,4 +1,3 @@
-import json
 import logging
 import threading
 import time
@@ -13,6 +12,7 @@ from cdr_controller.filters.template_01 import template_1_main
 from cdr_controller.filters.template_03 import template_3_main
 from cdr_controller.filters.template_05 import template_05_main
 from . import data_generator
+from .get_result import *
 
 data_generator_exit_flag = 0
 logger = logging.getLogger(__name__)
@@ -49,11 +49,11 @@ thread0 = dataGenThread(pick_type_distribution='default',
                         delta_distribution='default',
                         rate_place_distribution=0.7)
 
-p0 = Process(target = template_0_main)
-p1 = Process(target = template_1_main)
-#p2 = Process(target = template_2_main)
-p3 = Process(target = template_3_main)
-p5 = Process(target = template_05_main)
+p0 = Process(target=template_0_main)
+p1 = Process(target=template_1_main)
+# p2 = Process(target = template_2_main)
+p3 = Process(target=template_3_main)
+p5 = Process(target=template_05_main)
 template_pool = [p0, p1, p3, p5]
 
 
@@ -69,8 +69,8 @@ def index(request):
     global thread0
     if not thread0.isAlive():
         return render(request, 'homepage.html', {})
-    
-    data = {"chartBarHours": data1,
+    data_tmp0 = get_tmp0_data()
+    data = {"chartBarHours": data_tmp0,
             "chartPieType": data2,
             "chartBarInternational": data3}
     return render(request, 'index.html', data)
@@ -104,6 +104,7 @@ def workload_generator(request):
     elif request.method == 'GET':
         pass
     return render(request, 'workload_generator.html', {})
+
 
 dataset_table = {
     "data": [
@@ -152,7 +153,7 @@ dataset_table = {
                 {"title": "Office"},
                 {"title": "Age"},
                 {"title": "Start date"},
-                {"title": "Salary"} ]
+                {"title": "Salary"}]
 }
 
 
@@ -172,11 +173,6 @@ def page1_view(request):
 def page2_view(request):
     return HttpResponse("page2")
 
-
-data1 = {"label": ["0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00",
-                   "7:00", "8:00", "9:00", "10:00", "11:00", "12:00"],
-         "data": [1345, 1234, 433, 1234, 1432, 433, 1234, 1432, 433, 1234,
-                  1432, 2193, 900]}
 
 data2 = {"label": ['private',
                    'business',
@@ -207,7 +203,8 @@ data3 = {
 
 # custom templates
 def custom_template0(request):
-    return render(request, 'filters/template_00.html', data1)
+    data_tmp0 = get_tmp0_data()
+    return render(request, 'filters/template_00.html', data_tmp0)
 
 
 def custom_template1(request):
@@ -220,7 +217,8 @@ def custom_template3(request):
 
 # data source
 def data_template0(request):
-    return HttpResponse(json.dumps(data1))
+    data_tmp0 = get_tmp0_data()
+    return HttpResponse(json.dumps(data_tmp0))
 
 
 def data_template1(request):
@@ -233,6 +231,7 @@ def data_template3(request):
 
 def data_table_platform(request):
     return HttpResponse(json.dumps(dataset_table))
+
 
 def show_info(request):
     html = '<div>' + "request method: " + request.method + '</div>'
@@ -267,7 +266,7 @@ def data_gen_start(request):
 
 def data_gen_stop(request):
     global data_generator_exit_flag
-    global thread0, p0, p1, p3, p5 #, p2
+    global thread0, p0, p1, p3, p5  # , p2
 
     # restart template process
     p0.terminate()
@@ -276,10 +275,10 @@ def data_gen_stop(request):
     p3.terminate()
     p5.terminate()
     p0 = Process(target=template_0_main)
-    p1 = Process(target = template_1_main)
-    #p2 = Process(target = template_2_main)
-    p3 = Process(target = template_3_main)
-    p5 = Process(target = template_05_main)
+    p1 = Process(target=template_1_main)
+    # p2 = Process(target = template_2_main)
+    p3 = Process(target=template_3_main)
+    p5 = Process(target=template_05_main)
     data_generator_exit_flag = 1
     while (thread0.isAlive()):
         time.sleep(0.01)
