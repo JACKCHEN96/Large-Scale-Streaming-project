@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django_redis import get_redis_connection
 
 from . import data_generator
+from cdr_controller.filters.template_0 import template_0_main
 
 data_generator_exit_flag = 0
 logger = logging.getLogger(__name__)
@@ -35,12 +36,19 @@ class dataGenThread(threading.Thread):
                 delta_distribution=self.delta_distribution,
                 rate_place_distribution=self.rate_place_distribution)
 
-
-thread1 = dataGenThread(pick_type_distribution='default',
+thread0 = dataGenThread(pick_type_distribution='default',
                         rate_type_distribution=0.3,
                         pick_call_distribution='default',
                         delta_distribution='default',
                         rate_place_distribution=0.7)
+
+class template0Thread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+    def run(self):
+        template_0_main()
+
+thread1 = template0Thread()
 
 
 def hello_world(request):
@@ -52,15 +60,15 @@ def homepage(request):
 
 
 def index(request):
-    global thread1
-    if not thread1.isAlive():
+    global thread0
+    if not thread0.isAlive():
         return render(request, 'homepage.html', {})
     return render(request, 'index.html', {})
 
 
 def workload_generator(request):
-    global thread1
-    if not thread1.isAlive():
+    global thread0, thread1
+    if not thread0.isAlive():
         return render(request, 'homepage.html', {})
     if request.method == 'POST':
         data_gen_stop(request)
@@ -71,26 +79,17 @@ def workload_generator(request):
         rate_place_distribution = float(request.POST['rate_place_distribution'])
 
         logger.info("Start updating workload generator ... ")
-        thread1 = dataGenThread(
+        thread0 = dataGenThread(
             pick_type_distribution=pick_type_distribution,
             rate_type_distribution=rate_type_distribution,
             pick_call_distribution=pick_call_distribution,
             delta_distribution=delta_distribution,
             rate_place_distribution=rate_place_distribution)
-        thread1.start()
+        thread0.start()
         logger.info("Update workload generator successfully! ")
     elif request.method == 'GET':
         pass
     return render(request, 'workload_generator.html', {})
-
-
-def page1_view(request):
-    return HttpResponse("page1")
-
-
-def page2_view(request):
-    return HttpResponse("page2")
-
 
 def show_info(request):
     html = '<div>' + "request method: " + request.method + '</div>'
@@ -103,63 +102,26 @@ def show_info(request):
     html += '<div>' + "request.META:" + str(request.META) + '</div>'
     return HttpResponse(html)
 
-
-def data_gen_test(request):
-    if request.method == 'POST':
-        pick_type_distribution = request.POST['pick_type_distribution']
-        rate_type_distribution = request.POST['rate_type_distribution']
-        pick_call_distribution = request.POST['pick_call_distribution']
-        delta_distribution = request.POST['delta_distribution']
-        rate_place_distribution = request.POST['rate_place_distribution']
-        p1 = data_generator.people(
-            pick_type_distribution=pick_type_distribution,
-            rate_type_distribution=rate_type_distribution,
-            pick_call_distribution=pick_call_distribution,
-            delta_distribution=delta_distribution,
-            rate_place_distribution=rate_place_distribution)
-        return HttpResponse('data_generator starts by post')
-    elif request.method == 'GET':
-        pick_type_distribution = request.GET['pick_type_distribution']
-        rate_type_distribution = request.GET['rate_type_distribution']
-        pick_call_distribution = request.GET['pick_call_distribution']
-        delta_distribution = request.GET['delta_distribution']
-        rate_place_distribution = request.GET['rate_place_distribution']
-        p1 = data_generator.people(
-            pick_type_distribution=pick_type_distribution,
-            rate_type_distribution=rate_type_distribution,
-            pick_call_distribution=pick_call_distribution,
-            delta_distribution=delta_distribution,
-            rate_place_distribution=rate_place_distribution)
-        return HttpResponse('data_generator starts by get')
-    else:
-        return HttpResponse('wrong request method')
-
-
-def data_gen_test_get_res(request):
-    conn = get_redis_connection('default')
-    res = conn.get('3aad3ac0-8731-11ea-9a51-14abc512967e')
-    return HttpResponse(res)
-
-
 def data_gen_start(request):
     global data_generator_exit_flag
-    global thread1
-    thread1 = dataGenThread(pick_type_distribution='default',
+    global thread0
+    thread0 = dataGenThread(pick_type_distribution='default',
                             rate_type_distribution=0.3,
                             pick_call_distribution='default',
                             delta_distribution='default',
                             rate_place_distribution=0.7)
     data_generator_exit_flag = 0
-    thread1.start()
+    thread0.start()
     logger.info("Start data generator")
+    thread1.start()
     return HttpResponse('Success')
 
 
 def data_gen_stop(request):
     global data_generator_exit_flag
-    global thread1
+    global thread0
     data_generator_exit_flag = 1
-    while (thread1.isAlive()):
+    while (thread0.isAlive()):
         time.sleep(0.01)
         print('thread alive')
     logger.info('thread killed')

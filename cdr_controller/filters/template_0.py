@@ -245,6 +245,7 @@ class template_0:
 
 # eeeeeeee fe fe fef fefe
 def template_0_main():
+    global ssc
     test_temp_0=template_0(IP="localhost",port=9000)
     test_temp_0.count_duration(None)
 
