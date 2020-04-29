@@ -9,8 +9,8 @@ from pyspark.sql import SparkSession
 from pyspark.streaming import StreamingContext
 from phonenumbers.phonenumberutil import region_code_for_country_code
 
-rds_temp = redis.Redis(host='localhost', port=6379, decode_responses=True,
-                       db=6)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+# rds_temp = redis.Redis(host='localhost', port=6379, decode_responses=True,
+#                        db=6)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
 
 # create spark context
 spark = SparkSession.builder.appName('myApp').getOrCreate()
@@ -26,14 +26,8 @@ class template_3:
     """
     The third template to analyze the country of callednumber
     """
-    default_connect_info = {
-        'host': 'localhost',
-        'user': 'root',
-        'db': '0',
-        'port': 6379
-    }
 
-    def __init__(self, IP="localhost", interval=10, port=6379):
+    def __init__(self, IP="localhost", interval=10, port=9000):
         self.IP = IP
         self.interval = interval
         self.port = port
@@ -51,21 +45,17 @@ class template_3:
 
         # Drop all invalid data. TODO
 
-        def save_rdd(rdd):
-            if not rdd.isEmpty():
-                df = rdd.sortBy(lambda x: x[0]).toDF()
-                # df.show()
-                df.write.format("org.apache.spark.sql.redis").option("table", "counts").option("key.column", "_1").save(
-                    mode='overwrite')
-
         callednumber = self.lines.map(lambda x: (x.split("|")[3]))
         place = callednumber.map(lambda x: region_code_for_country_code(int(x.split("-")[0].split("+")[1])))
         place_count = place.map(lambda place: (place, 1)).reduceByKey(lambda x, y: x + y)
 
-        place_count.foreachRDD(save_rdd)
+        place_count.pprint()
+        place_count.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp3/region.json"))
 
 
-test_temp_3 = template_3()
+
+
+test_temp_3 = template_3(IP="localhost",port=9000)
 test_temp_3.count_duration(None)
 
 ssc.start()
