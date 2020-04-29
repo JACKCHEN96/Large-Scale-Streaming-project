@@ -89,6 +89,66 @@ def workload_generator(request):
     return render(request, 'workload_generator.html', {})
 
 
+dataset_table = {
+    "data": [
+        [
+            "Tiger Nixon",
+            "System Architect",
+            "Edinburgh",
+            "54",
+            "2011/04/25",
+            "$320,800"
+        ],
+        [
+            "Garrett Winters",
+            "Accountant",
+            "Tokyo",
+            "42",
+            "2011/07/25",
+            "$170,750"
+        ],
+        [
+            "Ashton Cox",
+            "Junior Technical Author",
+            "San Francisco",
+            "56",
+            "2009/01/12",
+            "$86,000"
+        ],
+        [
+            "Cedric Kelly",
+            "Senior Javascript Developer",
+            "Edinburgh",
+            "62",
+            "2012/03/29",
+            "$433,060"
+        ],
+        [
+            "Airi Satou",
+            "Accountant",
+            "Tokyo",
+            "54",
+            "2008/11/28",
+            "$162,700"
+        ]],
+    "columns": [{"title": "Name"},
+                {"title": "Position"},
+                {"title": "Office"},
+                {"title": "Age"},
+                {"title": "Start date"},
+                {"title": "Salary"} ]
+}
+
+
+def plan_platform(request):
+    if request.method == "POST":
+        # TODO: acquire updated parameters from request.POST
+        return render(request, "plan_platform.html",
+                      {"datasetTable": dataset_table})
+    return render(request, "plan_platform.html",
+                  {"datasetTable": dataset_table})
+
+
 def page1_view(request):
     return HttpResponse("page1")
 
@@ -153,6 +213,10 @@ def data_template1(request):
 
 def data_template3(request):
     return HttpResponse(json.dumps(data3))
+
+
+def data_table_platform(request):
+    return HttpResponse(json.dumps(dataset_table))
 
 
 def show_info(request):
