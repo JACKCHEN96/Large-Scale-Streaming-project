@@ -4,15 +4,18 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Workload Generator</title>
+    <title>Policy & Plan</title>
 
     <!-- Custom fonts for this template-->
-    <link href="{% static "fontawesome-free/css/all.min.css" %}"  rel="stylesheet"
-      type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="{% static "fontawesome-free/css/all.min.css" %}"
+          rel="stylesheet"
+          type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link href="{% static "css/sb-admin-2.min.css" %}" rel="stylesheet">
@@ -24,10 +27,12 @@
 <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url "index" %}">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center"
+           href="index.html">
             <div class="sidebar-brand-icon">
                 <i class="fas fa-fw fa-cog"></i>
             </div>
@@ -39,7 +44,7 @@
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item">
-            <a class="nav-link" href="{% url "index" %}">
+            <a class="nav-link" href="index.html">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span></a>
         </li>
@@ -53,33 +58,41 @@
         </div>
 
         <!-- Nav Item - Workload Generator -->
-        <li class="nav-item active">
+        <li class="nav-item">
             <a class="nav-link" href="{% url "workload_generator" %}">
                 <i class="fas fa-fw fa-wrench"></i>
                 <span>Workload Generator</span></a>
         </li>
+
         <!-- Nav Item - Templates Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse"
+               data-target="#collapseTwo" aria-expanded="true"
+               aria-controls="collapseTwo">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Templates</span>
             </a>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div id="collapseTwo" class="collapse"
+                 aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Custom Templates:</h6>
-                    <a class="collapse-item" href="{% url "template0" %}">Template
+                    <a class="collapse-item"
+                       href="{% url "template0" %}">Template
                         0</a>
                     <a class="collapse-item" href="{% url "template1" %}">Template
                         1</a>
                     <a class="collapse-item" href="template_02.html">Template
                         2</a>
+                    <a class="collapse-item"
+                       href="{% url "template3" %}">Template
+                        3</a>
                 </div>
             </div>
         </li>
 
 
         <!-- Nav Item - Policy & Plan -->
-        <li class="nav-item">
+        <li class="nav-item active">
             <a class="nav-link" href="{% url "plan_platform" %}">
                 <i class="fas fa-fw fa-table"></i>
                 <span>Policy & Plan</span></a>
@@ -113,29 +126,33 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Workload Generator</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Policy & Plan</h1>
                 </div>
-
 
                 <!-- Content Row -->
                 <div class="row">
 
                     <!-- Content Column -->
-                    <div class="col-lg-6 mb-4">
+                    <div class="col-sm-4 mb-4">
 
                         <!-- Project Card Example -->
                         <div class="card shadow mb-4 ">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Configuration</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    Configuration</h6>
                             </div>
                             <div class="card-body">
                                 <form method="post">
                                     {% csrf_token %}
                                     <div class="form-group row">
                                         <label
-                                                for="{[ pick_type_distribution ]}" class="col-sm-4 col-form-label">Pick type distribution</label>
+                                                for="{[ pick_type_distribution ]}"
+                                                class="col-sm-4 col-form-label">Pick
+                                            type distribution</label>
                                         <div class="col-sm-6">
-                                            <select class="form-control" id="{[ pick_type_distribution ]}" name="pick_type_distribution">
+                                            <select class="form-control"
+                                                    id="{[ pick_type_distribution ]}"
+                                                    name="pick_type_distribution">
                                                 <option>Business</option>
                                                 <option>Agency</option>
                                                 <option>Education</option>
@@ -148,15 +165,24 @@
                                     </div>
                                     <div class="form-group row">
                                         <label for="{[ rate_type_distribution ]}"
-                                               class="col-sm-4 col-form-label">Rate type distribution</label>
+                                               class="col-sm-4 col-form-label">Rate
+                                            type distribution</label>
                                         <div class="col-sm-6">
-                                            <input type="text" class="form-control" id="{[ rate_type_distribution ]}" name="rate_type_distribution" placeholder="0.0~1.0">
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="{[ rate_type_distribution ]}"
+                                                   name="rate_type_distribution"
+                                                   placeholder="0.0~1.0">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="{[ pick_call_distribution ]}" class="col-sm-4 col-form-label">Pick call distribution</label>
+                                        <label for="{[ pick_call_distribution ]}"
+                                               class="col-sm-4 col-form-label">Pick
+                                            call distribution</label>
                                         <div class="col-sm-6">
-                                            <select class="form-control" id="{[ pick_call_distribution ]}" name="pick_call_distribution">
+                                            <select class="form-control"
+                                                    id="{[ pick_call_distribution ]}"
+                                                    name="pick_call_distribution">
                                                 <option>midnight mode</option>
                                                 <option>morning mode</option>
                                                 <option>afternoon mode</option>
@@ -166,9 +192,13 @@
 
                                     </div>
                                     <div class="form-group row">
-                                        <label for="{[ delta_distribution ]}" class="col-sm-4 col-form-label">Pick delta distribution</label>
+                                        <label for="{[ delta_distribution ]}"
+                                               class="col-sm-4 col-form-label">Pick
+                                            delta distribution</label>
                                         <div class="col-sm-6">
-                                            <select class="form-control" id="{[ delta_distribution ]}" name="delta_distribution">
+                                            <select class="form-control"
+                                                    id="{[ delta_distribution ]}"
+                                                    name="delta_distribution">
                                                 <option>exponential</option>
                                                 <option>poisson</option>
                                                 <option>binomial</option>
@@ -178,20 +208,56 @@
 
                                     <div class="form-group row">
                                         <label for="{[ delta_distribution ]}"
-                                               class="col-sm-4 col-form-label">Rate place distribution</label>
+                                               class="col-sm-4 col-form-label">Rate
+                                            place distribution</label>
                                         <div class="col-sm-6">
-                                            <input type="text" class="form-control" id="{[ rate_place_distribution ]}" name="rate_place_distribution"  placeholder="0.0~1.0">
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="{[ rate_place_distribution ]}"
+                                                   name="rate_place_distribution"
+                                                   placeholder="0.0~1.0">
                                         </div>
                                     </div>
                                     <hr>
-                                    <button type="submit" class="btn btn-primary btn-block">Update</button>
+                                    <button type="submit"
+                                            class="btn btn-primary btn-block">
+                                        Update
+                                    </button>
                                 </form>
 
                             </div>
                         </div>
 
                     </div>
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                DataTables
+                                Example</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered"
+                                       id="dataTable"
+                                       width="100%" cellspacing="0">
+                                    <thead>
+
+                                    </thead>
+                                    <tfoot>
+
+                                    </tfoot>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+
             </div>
             <!-- /.container-fluid -->
 
@@ -230,12 +296,23 @@
 <script src="{% static "js/sb-admin-2.min.js" %}"></script>
 
 <!-- Page level plugins -->
-<script src="{% static "chart.js/Chart.min.js" %}"></script>
+<script src="{% static "datatables/jquery.dataTables.min.js" %}"></script>
+<script src="{% static "datatables/dataTables.bootstrap4.min.js" %}"></script>
 
 <!-- Page level custom scripts -->
-<script src="{% static "js/demo/chart-area-demo.js" %}"></script>
-<script src="{% static "js/demo/chart-pie-demo.js" %}"></script>
+<script src="{% static "js/table-plan-platform.js" %}"></script>
 
+<script>
+    var datasetTable = {{ datasetTable | safe }};
 
+    $(document).ready(function () {
+        $('#dataTable').DataTable(datasetTable);
+    });
+</script>
+
+<script>
+{# TODO: bind update datatable with update button #}
+
+</script>
 </body>
 </html>
