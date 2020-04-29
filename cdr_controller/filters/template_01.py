@@ -8,8 +8,8 @@ from pyspark.sql.functions import *
 from pyspark.sql import SparkSession
 from pyspark.streaming import StreamingContext
 
-rds_temp = redis.Redis(host='localhost', port=6379, decode_responses=True,
-                  db=7)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+# rds_temp = redis.Redis(host='localhost', port=6379, decode_responses=True,
+#                   db=7)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
 rds_type = redis.Redis(host="localhost", port=6379, decode_responses=True,
                    db=1)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
 
@@ -28,16 +28,13 @@ class template_01:
     The second template to analyze CRD. It reads CRD from the first redis DB and then extract the call type from the second redis DB.
     """
 
-    def __init__(self,IP="localhost",interval=10,port=6379):
+    def __init__(self,IP="localhost",interval=10,port=9000):
         self.IP=IP
         self.interval=interval
         self.port=port
 
-
         # read data from port
         self.lines = ssc.socketTextStream(self.IP, self.port)
-
-
 
     def __str__(self):
         pass
@@ -49,11 +46,6 @@ class template_01:
 
         # TODO. Drop all invalid data
 
-        def save_rdd(rdd):
-            if not rdd.isEmpty():
-                df = rdd.sortBy(lambda x: x[0]).toDF()
-                # df.show()
-                df.write.format("org.apache.spark.sql.redis").option("table", "counts").option("key.column", "_1").save(mode='overwrite')
 
         process_lines=self.lines.map(lambda x: rds_type.get(x.split("|")[3]))
 
@@ -63,11 +55,11 @@ class template_01:
                      .reduceByKey(lambda x, y: x + y))  # reduceByKey对所有有着相同key的items执行reduce操作
 
 
-        resultRDD.foreachRDD(save_rdd)
+        resultRDD.pprint()
 
 
 
-test_temp_0=template_01()
+test_temp_0=template_01(IP="localhost",port=9000)
 test_temp_0.count_type(None)
 
 ssc.start()
