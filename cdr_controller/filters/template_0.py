@@ -8,7 +8,9 @@ from pyspark.sql import SparkSession
 from pyspark.streaming import StreamingContext
 from multiprocessing import Process
 import time
+import os
 
+STORE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "res")
 
 class template_0:
     """
@@ -202,7 +204,7 @@ class template_0:
             .union(temp_id_duration_total5)
 
         temp_midnight_total.pprint()
-        temp_midnight_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_midnight.json") if not rdd.isEmpty() else None)
+        temp_midnight_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp0", "tmp0_midnight.json")) if not rdd.isEmpty() else None)
 
         temp_morning_total=temp_id_duration_total6\
             .union(temp_id_duration_total7)\
@@ -212,7 +214,7 @@ class template_0:
             .union(temp_id_duration_total11)
 
         temp_morning_total.pprint()
-        temp_morning_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_morning.json") if not rdd.isEmpty() else None)
+        temp_morning_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp0", "tmp0_morning.json")) if not rdd.isEmpty() else None)
 
         temp_afternoon_total=temp_id_duration_total12\
             .union(temp_id_duration_total13)\
@@ -222,7 +224,7 @@ class template_0:
             .union(temp_id_duration_total17)
 
         temp_afternoon_total.pprint()
-        temp_afternoon_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_afternoon.json") if not rdd.isEmpty() else None)
+        temp_afternoon_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp0", "tmp0_afternoon.json")) if not rdd.isEmpty() else None)
 
         temp_evening_total=temp_id_duration_total18\
             .union(temp_id_duration_total19)\
@@ -232,7 +234,7 @@ class template_0:
             .union(temp_id_duration_total23)
 
         temp_evening_total.pprint()
-        temp_evening_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_evening.json") if not rdd.isEmpty() else None)
+        temp_evening_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp0", "tmp0_evening.json")) if not rdd.isEmpty() else None)
 
 
 def template_0_main():
@@ -242,8 +244,8 @@ def template_0_main():
     test_temp_0.ssc.start()
     print("Start process 0 for template 0")
     time.sleep(60)
-    test_temp_0.ssc.stop(stopSparkContext=False, stopGraceFully=True)
-    # test_temp_0.ssc.awaitTermination() # used for real time
+    # test_temp_0.ssc.stop(stopSparkContext=False, stopGraceFully=True)
+    test_temp_0.ssc.awaitTermination() # used for real time
 
 
 if __name__ == '__main__':

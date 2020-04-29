@@ -1,16 +1,17 @@
 import logging
 import threading
 import time
+from multiprocessing import Process
 
 from django.http import HttpResponse
 from django.shortcuts import render
-from django_redis import get_redis_connection
 
-from . import data_generator
 from cdr_controller.filters.template_0 import template_0_main
+from . import data_generator
 
 data_generator_exit_flag = 0
 logger = logging.getLogger(__name__)
+logging.getLogger("py4j").setLevel(logging.ERROR)
 
 
 class dataGenThread(threading.Thread):
@@ -36,19 +37,15 @@ class dataGenThread(threading.Thread):
                 delta_distribution=self.delta_distribution,
                 rate_place_distribution=self.rate_place_distribution)
 
+
 thread0 = dataGenThread(pick_type_distribution='default',
                         rate_type_distribution=0.3,
                         pick_call_distribution='default',
                         delta_distribution='default',
                         rate_place_distribution=0.7)
 
-class template0Thread(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-    def run(self):
-        template_0_main()
-
-thread1 = template0Thread()
+p0 = Process(target=template_0_main)
+template_pool = [p0]
 
 
 def hello_world(request):
@@ -67,7 +64,7 @@ def index(request):
 
 
 def workload_generator(request):
-    global thread0, thread1
+    global thread0
     if not thread0.isAlive():
         return render(request, 'homepage.html', {})
     if request.method == 'POST':
@@ -86,10 +83,14 @@ def workload_generator(request):
             delta_distribution=delta_distribution,
             rate_place_distribution=rate_place_distribution)
         thread0.start()
+
+        # Start templates process
+
         logger.info("Update workload generator successfully! ")
     elif request.method == 'GET':
         pass
     return render(request, 'workload_generator.html', {})
+
 
 def show_info(request):
     html = '<div>' + "request method: " + request.method + '</div>'
@@ -102,6 +103,7 @@ def show_info(request):
     html += '<div>' + "request.META:" + str(request.META) + '</div>'
     return HttpResponse(html)
 
+
 def data_gen_start(request):
     global data_generator_exit_flag
     global thread0
@@ -113,13 +115,17 @@ def data_gen_start(request):
     data_generator_exit_flag = 0
     thread0.start()
     logger.info("Start data generator")
-    thread1.start()
+    p0.start()
     return HttpResponse('Success')
 
 
 def data_gen_stop(request):
     global data_generator_exit_flag
-    global thread0
+    global thread0, p0
+
+    # restart template process
+    p0.terminate()
+    p0 = Process(target=template_0_main)
     data_generator_exit_flag = 1
     while (thread0.isAlive()):
         time.sleep(0.01)
