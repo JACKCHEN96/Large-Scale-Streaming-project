@@ -1,39 +1,39 @@
 __author__ = "Jiajing Sun"
 __email__ = "js5504@columbia.edu"
 
-import time
 import redis
 from pyspark import SparkConf, SparkContext
 from pyspark.sql.functions import *
 from pyspark.sql import SparkSession
 from pyspark.streaming import StreamingContext
+from multiprocessing import Process
+import time
+import os
 from phonenumbers.phonenumberutil import region_code_for_country_code
 
-# rds_temp = redis.Redis(host='localhost', port=6379, decode_responses=True,
-#                        db=6)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+STORE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "res")
 
-# create spark context
-spark = SparkSession.builder.appName('myApp').getOrCreate()
-sc = SparkContext.getOrCreate(SparkConf().setMaster("local[*]"))
-
-# create sql context, used for saving rdd
-sql_context = SparkSession(sc)
-
-# create the Streaming Context from the above spark context with batch interval size (seconds)
-ssc = StreamingContext(sc, 10)
-
-class template_3:
+class template_03:
     """
     The third template to analyze the country of callednumber
     """
 
-    def __init__(self, IP="localhost", interval=10, port=9000):
-        self.IP = IP
-        self.interval = interval
-        self.port = port
+    def __init__(self, IP="localhost", interval=10, port=9003):
+        self.spark = SparkSession.builder.appName('template0').getOrCreate()
+        self.sc = SparkContext.getOrCreate(SparkConf().setMaster("local"))
+
+        # create sql context, used for saving rdd
+        self.sql_context = SparkSession(self.sc)
+
+        # create the Streaming Context from the above spark context with batch interval size (seconds)
+        self.ssc = StreamingContext(self.sc, 10)
+        self.IP=IP
+        self.interval=interval
+        self.port=port
 
         # read data from port
-        self.lines = ssc.socketTextStream(self.IP, self.port)
+
+        self.lines = self.ssc.socketTextStream(self.IP, self.port)
 
     def __str__(self):
         pass
@@ -50,14 +50,23 @@ class template_3:
         place_count = place.map(lambda place: (place, 1)).reduceByKey(lambda x, y: x + y)
 
         place_count.pprint()
-        place_count.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp3/region.json"))
+
+        place_count.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp3", "region.json")) if not rdd.isEmpty() else None)
 
 
+def template_3_main():
+    test_temp_3 = template_03(IP="localhost", port=9003)
+    test_temp_3.count_duration(None)
+
+    test_temp_3.ssc.start()
+    print("Start process 0 for template 3")
+    time.sleep(60)
+    # test_temp_0.ssc.stop(stopSparkContext=False, stopGraceFully=True)
+    test_temp_3.ssc.awaitTermination() # used for real time
 
 
-test_temp_3 = template_3(IP="localhost",port=9000)
-test_temp_3.count_duration(None)
-
-ssc.start()
-time.sleep(60)
-ssc.stop(stopSparkContext=False, stopGraceFully=True)
+if __name__ == '__main__':
+    p3 = Process(target=template_3_main)
+    p3.start()
+    print("Wait for terminated")
+    p3.join()

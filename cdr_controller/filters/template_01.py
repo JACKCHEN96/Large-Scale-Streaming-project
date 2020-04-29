@@ -18,7 +18,7 @@ class template_01:
     The second template to analyze CRD. It reads CRD from the first redis DB and then extract the call type from the second redis DB.
     """
 
-    def __init__(self,IP="localhost",interval=10,port=9000):
+    def __init__(self,IP="localhost",interval=10,port=9001):
 
         self.spark = SparkSession.builder.appName('template0').getOrCreate()
         self.sc = SparkContext.getOrCreate(SparkConf().setMaster("local"))
@@ -62,15 +62,15 @@ class template_01:
 
         resultstream.pprint()
 
-        resultstream.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp1", "tmp1.json")) if not rdd.isEmpty() else None)
+        resultstream.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp1", "type.json")) if not rdd.isEmpty() else None)
 
 
 def template_1_main():
-    test_temp_1 = template_01(IP="localhost", port=9000)
+    test_temp_1 = template_01(IP="localhost", port=9001)
     test_temp_1.count_type(None)
 
     test_temp_1.ssc.start()
-    print("Start process 0 for template 0")
+    print("Start process 0 for template 1")
     time.sleep(60)
     # test_temp_0.ssc.stop(stopSparkContext=False, stopGraceFully=True)
     test_temp_1.ssc.awaitTermination() # used for real time
