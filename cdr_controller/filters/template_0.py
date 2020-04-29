@@ -8,8 +8,8 @@ from pyspark.sql import SparkSession
 from pyspark.streaming import StreamingContext
 import time
 
-rds_temp = redis.Redis(host='localhost', port=6379, decode_responses=True,
-                  db=6)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+# rds_temp = redis.Redis(host='localhost', port=6379, decode_responses=True,
+#                   db=6)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
 
 # create spark context
 spark = SparkSession.builder.appName('myApp').getOrCreate()
