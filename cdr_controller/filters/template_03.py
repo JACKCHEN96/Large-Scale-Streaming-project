@@ -1,5 +1,5 @@
-__author__ = "Jiajing Sun"
-__email__ = "js5504@columbia.edu"
+__author__ = "Wenjie Chen"
+__email__ = "wc2685@columbia.edu"
 
 import redis
 from pyspark import SparkConf, SparkContext
