@@ -26,7 +26,7 @@ class template_5:
     The fifth template to count the call time duration sum of every hour of n lines
     """
 
-    def __init__(self, IP="localhost", interval=10, port=6379):
+    def __init__(self, IP="localhost", interval=10, port=9000):
         self.IP = IP
         self.interval = interval
         self.port = port
@@ -81,11 +81,14 @@ class template_5:
                                                                                                     "_1").save(
                     mode='overwrite')
 
-        people_calltime_w_count.foreachRDD(save_rdd_1)
-        people_calltime_d_count.foreachRDD(save_rdd_2)
+        # people_calltime_w_count.foreachRDD(save_rdd_1)
+        # people_calltime_d_count.foreachRDD(save_rdd_2)
+        people_calltime_w_count.foreachRDD(lambda rdd: print(rdd.sortBy(lambda x: (x[0], -x[2], x[1])).map(lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x).collect()))
+        people_calltime_d_count.foreachRDD(lambda rdd: print(rdd.sortBy(lambda x: (x[0], -x[2], x[1])).map(lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x).collect()))
+        # people_calltime_w_count.pprint()
+        # people_calltime_d_count.pprint()
 
-
-test_temp_5 = template_5()
+test_temp_5 = template_5(IP="localhost",port=9000)
 test_temp_5.count_calltime(None)
 
 ssc.start()
