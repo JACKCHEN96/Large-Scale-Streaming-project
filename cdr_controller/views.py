@@ -64,9 +64,9 @@ def index(request):
 
 
 def workload_generator(request):
-    global thread1
-    if not thread1.isAlive():
-        return render(request, 'homepage.html', {})
+    # global thread1
+    # if not thread1.isAlive():
+    #     return render(request, 'homepage.html', {})
     if request.method == 'POST':
         data_gen_stop(request)
         pick_type_distribution = request.POST['pick_type_distribution']
