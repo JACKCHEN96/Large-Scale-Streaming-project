@@ -244,10 +244,13 @@ class template_0:
         temp_evening_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_evening.json"))
 
 # eeeeeeee fe fe fef fefe
+def template_0_main():
+    test_temp_0=template_0(IP="localhost",port=9000)
+    test_temp_0.count_duration(None)
 
-test_temp_0=template_0(IP="localhost",port=9000)
-test_temp_0.count_duration(None)
+    ssc.start()
+    time.sleep(60)
+    ssc.stop(stopSparkContext=False, stopGraceFully=True)
 
-ssc.start()
-time.sleep(60)
-ssc.stop(stopSparkContext=False, stopGraceFully=True)
+if __name__ == '__main__':
+    template_0_main()
