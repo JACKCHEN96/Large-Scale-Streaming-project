@@ -45,9 +45,16 @@ class template_01:
         """
 
         # TODO. Drop all invalid data
+        def helper(x):
+            rds_type = redis.Redis(host="localhost", port=6379, decode_responses=True,
+                                   db=1)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+
+            return "private" if rds_type.get(x.split("|")[3])==None else rds_type.get(x.split("|")[3])
 
 
-        process_lines=self.lines.map(lambda x: rds_type.get(x.split("|")[3]))
+        process_lines=self.lines.map(helper)
+        # self.lines.pprint()
+        # process_lines.pprint()
 
         resultRDD = (process_lines
                      .map(lambda word: word.lower())
