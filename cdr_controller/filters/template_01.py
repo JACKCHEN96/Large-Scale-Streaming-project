@@ -2,26 +2,16 @@ __author__ = "Wenjie Chen"
 __email__ = "wc2685@columbia.edu"
 
 import redis
-import time
 from pyspark import SparkConf, SparkContext
 from pyspark.sql.functions import *
 from pyspark.sql import SparkSession
 from pyspark.streaming import StreamingContext
+from multiprocessing import Process
+import time
+import os
 
-# rds_temp = redis.Redis(host='localhost', port=6379, decode_responses=True,
-#                   db=7)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
-rds_type = redis.Redis(host="localhost", port=6379, decode_responses=True,
-                   db=1)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+STORE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "res")
 
-# create spark context
-spark = SparkSession.builder.appName('myApp').getOrCreate()
-sc = SparkContext.getOrCreate(SparkConf().setMaster("local[*]"))
-
-# create sql context, used for saving rdd
-sql_context = SparkSession(sc)
-
-# create the Streaming Context from the above spark context with batch interval size (seconds)
-ssc = StreamingContext(sc, 10)
 
 class template_01:
     """
@@ -29,12 +19,22 @@ class template_01:
     """
 
     def __init__(self,IP="localhost",interval=10,port=9000):
+
+        self.spark = SparkSession.builder.appName('template0').getOrCreate()
+        self.sc = SparkContext.getOrCreate(SparkConf().setMaster("local"))
+
+        # create sql context, used for saving rdd
+        self.sql_context = SparkSession(self.sc)
+
+        # create the Streaming Context from the above spark context with batch interval size (seconds)
+        self.ssc = StreamingContext(self.sc, 10)
         self.IP=IP
         self.interval=interval
         self.port=port
 
         # read data from port
-        self.lines = ssc.socketTextStream(self.IP, self.port)
+
+        self.lines = self.ssc.socketTextStream(self.IP, self.port)
 
     def __str__(self):
         pass
@@ -51,27 +51,36 @@ class template_01:
 
             return "private" if rds_type.get(x.split("|")[3])==None else rds_type.get(x.split("|")[3])
 
-
         process_lines=self.lines.map(helper)
         # self.lines.pprint()
         # process_lines.pprint()
 
-        resultRDD = (process_lines
-                     .map(lambda word: word.lower())
-                     .map(lambda word: (word, 1))  # 将word映射成(word,1)
-                     .reduceByKey(lambda x, y: x + y))  # reduceByKey对所有有着相同key的items执行reduce操作
+        resultstream = (process_lines
+                        .map(lambda word: word.lower())
+                        .map(lambda word: (word, 1))  # 将word映射成(word,1)
+                        .reduceByKey(lambda x, y: x + y))  # reduceByKey对所有有着相同key的items执行reduce操作
+
+        resultstream.pprint()
+
+        resultstream.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp1", "tmp1.json")) if not rdd.isEmpty() else None)
 
 
-        resultRDD.pprint()
+def template_1_main():
+    test_temp_1 = template_01(IP="localhost", port=9000)
+    test_temp_1.count_type(None)
+
+    test_temp_1.ssc.start()
+    print("Start process 0 for template 0")
+    time.sleep(60)
+    # test_temp_0.ssc.stop(stopSparkContext=False, stopGraceFully=True)
+    test_temp_1.ssc.awaitTermination() # used for real time
 
 
-
-test_temp_0=template_01(IP="localhost",port=9000)
-test_temp_0.count_type(None)
-
-ssc.start()
-time.sleep(60)
-ssc.stop(stopSparkContext=False, stopGraceFully=True)
+if __name__ == '__main__':
+    p1 = Process(target=template_1_main)
+    p1.start()
+    print("Wait for terminated")
+    p1.join()
 
 
 
