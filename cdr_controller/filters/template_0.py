@@ -245,6 +245,7 @@ def template_0_main():
     test_temp_0.ssc.stop(stopSparkContext=False, stopGraceFully=True)
     # test_temp_0.ssc.awaitTermination() # used for real time
 
+
 if __name__ == '__main__':
     p0 = Process(target=template_0_main)
     p0.start()
