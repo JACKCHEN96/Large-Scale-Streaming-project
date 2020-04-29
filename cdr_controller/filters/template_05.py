@@ -2,59 +2,38 @@ __author__ = "Wenjie Chen"
 __email__ = "wc2685@columbia.edu"
 
 import redis
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import *
 from pyspark import SparkConf, SparkContext
+from pyspark.sql.functions import *
+from pyspark.sql import SparkSession
+from pyspark.streaming import StreamingContext
+from multiprocessing import Process
+import time
+import os
 
-class template_5:
+STORE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "res")
+
+class template_05:
     """
-    The fifth template to count the call time duration sum of every hour of n lines 
+    The fifth template to count the call time duration sum of every hour of n lines
     """
-    default_connect_info = {
-        'host': 'localhost',
-        'user': 'root',
-        'db': '0',
-        'port': 6379
-    }
 
-    def __init__(self, connect_info=None):
+    def __init__(self, IP="localhost", interval=10, port=9005):
 
-        self.connect_info = connect_info
-        if connect_info == None:
-            self.connect_info = self.default_connect_info
+        self.spark = SparkSession.builder.appName('template0').getOrCreate()
+        self.sc = SparkContext.getOrCreate(SparkConf().setMaster("local"))
 
-        rds = redis.Redis(host=self.connect_info['host'],
-                          port=self.connect_info['port'],
-                          decode_responses=True,
-                          db=self.connect_info['db']
-                          )  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+        # create sql context, used for saving rdd
+        self.sql_context = SparkSession(self.sc)
 
-        pipe = rds.pipeline()
-        pipe_size = 100000
-        len = 0
-        key_list = []
-        value_list = []
-        # print(r.pipeline())
-        keys = rds.keys()
-        for key in keys:
-            key_list.append(key)
-            pipe.get(key)
-            if len < pipe_size:
-                len += 1
-            else:
-                for (k, v) in zip(key_list, pipe.execute()):
-                    print(k, v)
-                len = 0
-                key_list = []
+        # create the Streaming Context from the above spark context with batch interval size (seconds)
+        self.ssc = StreamingContext(self.sc, 10)
+        self.IP=IP
+        self.interval=interval
+        self.port=port
 
-        for (k, v) in zip(key_list, pipe.execute()):
-            value_list.append(str(v))  # value_list
+        # read data from port
 
-        spark = SparkSession.builder.appName('myApp').getOrCreate()
-        sc = SparkContext.getOrCreate(SparkConf().setMaster("local[*]"))
-
-        self.lines = sc.parallelize(value_list)
-        # print('show value list',value_list)
+        self.lines = self.ssc.socketTextStream(self.IP, self.port)
 
     def __str__(self):
         pass
@@ -78,25 +57,34 @@ class template_5:
         people_calltime_d_count = people_calltime_d.reduceByKey(
             lambda x, y: x + y).map(
             lambda x: (x[0].split(":")[0], x[0].split(":")[1], x[1]))
-            
-        # print(people_calltime.take(20))
-        # print(people_calltime_w_count.take(20))
-        # print(people_calltime_d_count.take(20))
 
-        people_w = people_calltime_w_count.sortBy(
-            lambda x: (x[0], -x[2], x[1])).map(
-            lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x)
-        people_d = people_calltime_d_count.sortBy(
-            lambda x: (x[0], -x[2], x[1])).map(
-            lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x)
+        # people_calltime_w_count.pprint()
+        # people_calltime_d_count.pprint()
 
-        print(people_w.take(20))
-        print(people_d.take(20))
+        # people_calltime_count_total=people_calltime_w_count.union(people_calltime_d_count)
+        # people_calltime_count_total.pprint()
 
-        # ptest=people_calltime.map(lambda x:(x[0],1)).reduceByKey(lambda x,y:x+y)
-        # print(ptest.take(20))
-        # ptest2=people_calltime_w_count.sortBy(lambda x: (x[0],-x[2],x[1]))
-        # print(ptest2.take(50))
+        people_calltime_w_count.foreachRDD(lambda rdd: rdd.sortBy(lambda x: (x[0], -x[2], x[1])).map(lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x)
+                                           .sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp5", "day.json")) if not rdd.isEmpty() else None)
 
-test_temp_5 = template_5()
-test_temp_5.count_calltime(None)
+        people_calltime_d_count.foreachRDD(lambda rdd: rdd.sortBy(lambda x: (x[0], -x[2], x[1])).map(lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x)
+                                           .sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp5", "clock.json")) if not rdd.isEmpty() else None)
+
+
+
+def template_05_main():
+    test_temp_5 = template_05(IP="localhost", port=9005)
+    test_temp_5.count_calltime(None)
+
+    test_temp_5.ssc.start()
+    print("Start process 0 for template 5")
+    time.sleep(60)
+    # test_temp_0.ssc.stop(stopSparkContext=False, stopGraceFully=True)
+    test_temp_5.ssc.awaitTermination() # used for real time
+
+
+if __name__ == '__main__':
+    p5 = Process(target=template_05_main)
+    p5.start()
+    print("Wait for terminated")
+    p5.join()
