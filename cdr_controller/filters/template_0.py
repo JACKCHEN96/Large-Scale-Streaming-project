@@ -10,7 +10,6 @@ from multiprocessing import Process
 import time
 
 
-
 class template_0:
     """
     The first template to analyze CRD 
@@ -30,16 +29,10 @@ class template_0:
         self.interval=interval
         self.port=port
 
-
         # read data from port
 
         self.lines = self.ssc.socketTextStream(self.IP, self.port)
 
-        # 11111111
-        # self.lines.foreachRDD(lambda rdd: print(rdd.take(20)))
-
-        # 22222222
-        # self.lines.pprint()
 
     def __str__(self):
         pass
@@ -241,7 +234,7 @@ class template_0:
         temp_evening_total.pprint()
         temp_evening_total.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json("../../res/tmp0/tmp0_evening.json") if not rdd.isEmpty() else None)
 
-# eeeeeeee fe fe fef fefe
+
 def template_0_main():
     test_temp_0=template_0(IP="localhost", port=9000)
     test_temp_0.count_duration(None)
