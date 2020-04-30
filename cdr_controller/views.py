@@ -13,6 +13,8 @@ from cdr_controller.filters.template_03 import template_3_main
 from cdr_controller.filters.template_05 import template_05_main
 from . import data_generator
 from .get_result import *
+from .queue_manage import *
+
 
 data_generator_exit_flag = 0
 logger = logging.getLogger(__name__)
@@ -50,19 +52,32 @@ thread0 = dataGenThread(pick_type_distribution='default',
                         delta_distribution='default',
                         rate_place_distribution=0.7)
 
+qm0 = Process(target=queueStarter, args=(9000, "ID_0"))
+qm1 = Process(target=queueStarter, args=(9001, "ID_01"))
+qm2 = Process(target=queueStarter, args=(9002, "ID_02"))
+qm3 = Process(target=queueStarter, args=(9003, "ID_03"))
+qm5 = Process(target=queueStarter, args=(9005, "ID_05"))
+
+qm0.start()
+# qm1.start()
+# qm2.start()
+qm3.start()
+qm5.start()
+
+
 p0 = Process(target=template_0_main)
 p1 = Process(target=template_1_main)
 p2 = Process(target = template_2_main)
 p3 = Process(target=template_3_main)
 p5 = Process(target=template_05_main)
 # template_pool = [p0, p1, p3, p5]
-template_pool = [p1]
+# template_pool = [p1]
 
-# p0.start()
+p0.start()
 # p1.start()
-p2.start()
-# p3.start()
-# p5.start()
+# p2.start()
+p3.start()
+p5.start()
 
 
 def hello_world(request):
@@ -253,26 +268,26 @@ def data_gen_start(request):
 def data_gen_stop(request):
     global data_generator_exit_flag
     # global thread0, p0, p1, p3, p5 , p2
-    global thread0, p0
+    global thread0, p0, p3, p5
 
     # restart template process
     p0.terminate()
     # p1.terminate()
     # p2.terminate()
-    # p3.terminate()
-    # p5.terminate()
-    del p0
+    p3.terminate()
+    p5.terminate()
+    del p0,p3,p5
     p0 = Process(target=template_0_main)
     # p1 = Process(target=template_1_main)
     # p2 = Process(target = template_2_main)
-    # p3 = Process(target=template_3_main)
-    # p5 = Process(target=template_05_main)
+    p3 = Process(target=template_3_main)
+    p5 = Process(target=template_05_main)
 
     p0.start()
     # p1.start()
     # p2.start()
-    # p3.start()
-    # p5.start()
+    p3.start()
+    p5.start()
 
     data_generator_exit_flag = 1
     while (thread0.isAlive()):
