@@ -33,6 +33,7 @@ class dataGenThread(threading.Thread):
     def run(self):
         global data_generator_exit_flag
         while (1):
+            time.sleep(0.5)
             if data_generator_exit_flag:
                 exit(0)
             data_generator.people(

@@ -314,7 +314,7 @@ class people:
         rds.lpush('ID_05',str(tempdata))
 
 
-p1=people()
+# p1=people()
 # test generate
 # print("----------- test generate -----------")
 # d1 = data_generator(ID=1)
