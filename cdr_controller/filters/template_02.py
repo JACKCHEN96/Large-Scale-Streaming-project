@@ -97,12 +97,12 @@ class template_02:
         people_type_max=people_type_count.transform(lambda rdd: rdd.sortBy(lambda x: (x[0],-int(x[2]),x[1])).map(lambda x: (x[0],x[1])).reduceByKey(lambda x,y:x))
 
         # people_type_max.pprint()
-        people_type_max.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp2", "pptype.json")) if not rdd.isEmpty() else None)
+        people_type_max.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp2", "pptype2.json")) if not rdd.isEmpty() else None)
         # Second, people with tag
         people_tag=people_type_count.map(mapper)
         people_tag_max=people_tag.transform(lambda rdd: rdd.sortBy(lambda x: (x[0],-int(x[2]),x[1])).map(lambda x: (x[0],x[1])).reduceByKey(lambda x,y:x))
         people_tag_max.pprint()
-        people_tag_max.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp2", "pptag.json")) if not rdd.isEmpty() else None)
+        people_tag_max.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp2", "pptag2.json")) if not rdd.isEmpty() else None)
 
 
 
