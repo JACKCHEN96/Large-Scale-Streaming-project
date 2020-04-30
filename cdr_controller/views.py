@@ -8,7 +8,7 @@ from django.shortcuts import render
 
 from cdr_controller.filters.template_0 import template_0_main
 from cdr_controller.filters.template_01 import template_1_main
-# from cdr_controller.filters.template_02 import template_2_main
+from cdr_controller.filters.template_02 import template_2_main
 from cdr_controller.filters.template_03 import template_3_main
 from cdr_controller.filters.template_05 import template_05_main
 from . import data_generator
@@ -33,7 +33,7 @@ class dataGenThread(threading.Thread):
     def run(self):
         global data_generator_exit_flag
         while (1):
-            time.sleep(0.5)
+            time.sleep(0.1)
             if data_generator_exit_flag:
                 exit(0)
             data_generator.people(
@@ -52,7 +52,7 @@ thread0 = dataGenThread(pick_type_distribution='default',
 
 p0 = Process(target=template_0_main)
 p1 = Process(target=template_1_main)
-# p2 = Process(target = template_2_main)
+p2 = Process(target = template_2_main)
 p3 = Process(target=template_3_main)
 p5 = Process(target=template_05_main)
 template_pool = [p0, p1, p3, p5]
@@ -244,7 +244,7 @@ def data_gen_start(request):
     logger.info("Start data generator")
     p0.start()
     p1.start()
-    # p2.start()
+    p2.start()
     p3.start()
     p5.start()
     return HttpResponse('Success')
@@ -252,17 +252,17 @@ def data_gen_start(request):
 
 def data_gen_stop(request):
     global data_generator_exit_flag
-    global thread0, p0, p1, p3, p5  # , p2
+    global thread0, p0, p1, p3, p5 , p2
 
     # restart template process
     p0.terminate()
     p1.terminate()
-    # p2.terminate()
+    p2.terminate()
     p3.terminate()
     p5.terminate()
     p0 = Process(target=template_0_main)
     p1 = Process(target=template_1_main)
-    # p2 = Process(target = template_2_main)
+    p2 = Process(target = template_2_main)
     p3 = Process(target=template_3_main)
     p5 = Process(target=template_05_main)
     data_generator_exit_flag = 1
