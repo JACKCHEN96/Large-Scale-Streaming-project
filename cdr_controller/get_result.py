@@ -108,7 +108,7 @@ def get_form_data(people_id="", tags=None, day="", clock=""):
         tmp_df = tmp_df.loc[tmp_df["day"] == day]
     if not clock == "":
         tmp_df = tmp_df.loc[tmp_df["clock"] == clock]
-
+    tmp_df = tmp_df.fillna("None")
     pretty_res = json.loads(tmp_df.to_json(orient="split"))
     pretty_res["columns"] = [{"title": col} for col in pretty_res["columns"]]
     return pretty_res
