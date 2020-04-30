@@ -33,11 +33,14 @@ class dataGenThread(threading.Thread):
         self.rate_place_distribution = rate_place_distribution
 
     def run(self):
+        logging.info("Compute data generator data")
         global data_generator_exit_flag
         while (1):
             time.sleep(0.1)
             if data_generator_exit_flag:
                 exit(0)
+
+            logging.info("get data from data generator")
             data_generator.people(
                 pick_type_distribution=self.pick_type_distribution,
                 rate_type_distribution=self.rate_type_distribution,
@@ -61,8 +64,8 @@ qm5 = Process(target=queueStarter, args=(9005, "ID_05"))
 qm0.start()
 # qm1.start()
 # qm2.start()
-qm3.start()
-qm5.start()
+# qm3.start()
+# qm5.start()
 
 
 p0 = Process(target=template_0_main)
@@ -76,8 +79,8 @@ p5 = Process(target=template_05_main)
 p0.start()
 # p1.start()
 # p2.start()
-p3.start()
-p5.start()
+# p3.start()
+# p5.start()
 
 
 def hello_world(request):
@@ -89,9 +92,6 @@ def homepage(request):
 
 
 def index(request):
-    global thread0
-    if not thread0.isAlive():
-        return render(request, 'homepage.html', {})
     data_tmp0 = get_tmp0_data()
     data_tmp1 = get_tmp1_data()
     data_tmp3 = get_tmp3_data()
@@ -102,9 +102,6 @@ def index(request):
 
 
 def workload_generator(request):
-    global thread0, template_pool
-    if not thread0.isAlive():
-        return render(request, 'homepage.html', {})
     if request.method == 'POST':
         data_gen_stop(request)
         pick_type_distribution = request.POST['pick_type_distribution']
@@ -122,7 +119,15 @@ def workload_generator(request):
             rate_place_distribution=rate_place_distribution)
         thread0.start()
 
+        time.sleep(0.5)
         logger.info("Update workload generator successfully! ")
+        data_tmp0 = get_tmp0_data()
+        data_tmp1 = get_tmp1_data()
+        data_tmp3 = get_tmp3_data()
+        data = {"chartBarHours": data_tmp0,
+                "chartPieType": data_tmp1,
+                "chartBarInternational": data_tmp3}
+        return render(request, 'index.html', data)
     elif request.method == 'GET':
         pass
     return render(request, 'workload_generator.html', {})
@@ -268,15 +273,15 @@ def data_gen_start(request):
 def data_gen_stop(request):
     global data_generator_exit_flag
     # global thread0, p0, p1, p3, p5 , p2
-    global thread0, p0, p3, p5
+    global thread0, p0
 
     # restart template process
     p0.terminate()
     # p1.terminate()
     # p2.terminate()
-    p3.terminate()
-    p5.terminate()
-    del p0,p3,p5
+    # p3.terminate()
+    # p5.terminate()
+    # del p0, p3, p5
     p0 = Process(target=template_0_main)
     # p1 = Process(target=template_1_main)
     # p2 = Process(target = template_2_main)
@@ -285,13 +290,14 @@ def data_gen_stop(request):
 
     p0.start()
     # p1.start()
-    # p2.start()
-    p3.start()
-    p5.start()
+    # # p2.start()
+    # p3.start()
+    # p5.start()
 
     data_generator_exit_flag = 1
     while (thread0.isAlive()):
         time.sleep(0.01)
         print('thread alive')
+    data_generator_exit_flag = 0
     logger.info('thread killed')
     return HttpResponse('Try to stop')

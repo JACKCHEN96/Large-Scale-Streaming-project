@@ -24,7 +24,7 @@ class QueueManager:
                 self.data += t
                 self.data += '\n'
             self.flag = 1
-            print('test')
+            # print('test')
         else:
             time.sleep(1)
 
@@ -35,13 +35,13 @@ class QueueManager:
         conn, addr = s0.accept()
         while True:
             self.test()
-            print(self.flag)
+            # print(self.flag)
             if self.flag != 0 and self.data != "":
                 conn.sendall(bytes(self.data, 'utf-8'))
                 self.flag = 0
-                print('send')
-            else:
-                print('wait')
+            #     print('send')
+            # else:
+            #     print('wait')
 
 
 def queueStarter(port, listName):
