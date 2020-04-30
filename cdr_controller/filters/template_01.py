@@ -73,7 +73,7 @@ class template_01:
 
 def template_1_main():
     test_temp_1 = template_01(IP="localhost", port=9001)
-    test_temp_1.count_type(None)
+    test_temp_1.count_type()
     test_temp_1.ssc.checkpoint(
         os.path.join(os.path.dirname(STORE_DIR), "checkpoints"))
     test_temp_1.ssc.start()
