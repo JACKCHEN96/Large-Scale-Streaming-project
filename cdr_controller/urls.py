@@ -40,6 +40,5 @@ urlpatterns = [
     path(r"data/template0", views.data_template0),
     path(r"data/template1", views.data_template1),
     path(r"data/template3", views.data_template3),
-    path(r"data/table_platform", views.data_table_platform),
     url(r'', views.homepage, name="homepage"),
 ]
