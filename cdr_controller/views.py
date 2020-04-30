@@ -64,7 +64,6 @@ qm2.start()
 qm3.start()
 qm5.start()
 
-
 p0 = Process(target=template_0_main)
 p1 = Process(target=template_1_main)
 p2 = Process(target=template_2_main)
@@ -74,7 +73,6 @@ p5 = Process(target=template_05_main)
 # template_pool = [p1]
 
 p0.start()
-
 
 p1.start()
 p2.start()
@@ -188,10 +186,6 @@ def data_template3(request):
     return HttpResponse(json.dumps(data_tmp3))
 
 
-def data_table_platform(request):
-    return HttpResponse(json.dumps(dataset_table))
-
-
 def show_info(request):
     html = '<div>' + "request method: " + request.method + '</div>'
     html += '<div>' + "request.GET: " + str(dict(request.GET)) + '</div>'
@@ -221,7 +215,7 @@ def data_gen_start(request):
 
 def data_gen_stop(request):
     global data_generator_exit_flag
-    global thread0, p0, p1, p3, p5 , p2
+    global thread0, p0, p1, p3, p5, p2
     # global thread0, p0
 
     # restart template process
@@ -233,7 +227,7 @@ def data_gen_stop(request):
     # del p0, p3, p5
     p0 = Process(target=template_0_main)
     p1 = Process(target=template_1_main)
-    p2 = Process(target = template_2_main)
+    p2 = Process(target=template_2_main)
     p3 = Process(target=template_3_main)
     p5 = Process(target=template_05_main)
 
