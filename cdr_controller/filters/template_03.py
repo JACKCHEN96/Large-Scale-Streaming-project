@@ -26,7 +26,7 @@ class template_03:
         self.sql_context = SparkSession(self.sc)
 
         # create the Streaming Context from the above spark context with batch interval size (seconds)
-        self.ssc = StreamingContext(self.sc, 10)
+        self.ssc = StreamingContext(self.sc, 1)
         self.IP = IP
         self.interval = interval
         self.port = port
@@ -63,7 +63,7 @@ def template_3_main():
     test_temp_3 = template_03(IP="localhost", port=9003)
     test_temp_3.count_duration()
     test_temp_3.ssc.checkpoint(
-        os.path.join(os.path.dirname(STORE_DIR), "checkpoints"))
+        os.path.join(os.path.dirname(STORE_DIR), "checkpoints-3"))
     test_temp_3.ssc.start()
     print("Start process 3 for template 3")
     time.sleep(60)
