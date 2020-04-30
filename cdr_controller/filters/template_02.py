@@ -51,12 +51,15 @@ class template_02:
 
                 rds_type = redis.Redis(host="localhost", port=6379, decode_responses=True,
                                        db=1)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+                res = (x.split("|")[0], "Private") if rds_type.get(
+                    x.split("|")[3]) is None else (
+                x.split("|")[0], rds_type.get(x.split("|")[3]))
+                rds_type.close()
+                return res
 
-                return (x.split("|")[0],"Private") if rds_type.get(x.split("|")[3])==None else (x.split("|")[0],rds_type.get(x.split("|")[3]))
             except Exception as e:
                 print(e)
-            finally:
-                return x.split("|")[0],"Private"
+                return x.split("|")[0], "Private"
 
         def mapper(x):
 

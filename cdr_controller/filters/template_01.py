@@ -21,7 +21,6 @@ class template_01:
     def __init__(self, IP="localhost", interval=10, port=9001):
         self.sc = SparkContext.getOrCreate(SparkConf().setMaster("local[2]"))
 
-
         # create sql context, used for saving rdd
         self.sql_context = SparkSession(self.sc)
 
@@ -49,8 +48,10 @@ class template_01:
                                    decode_responses=True,
                                    db=1)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
 
-            return "private" if rds_type.get(
-                x.split("|")[3]) == None else rds_type.get(x.split("|")[3])
+            res = "private" if rds_type.get(
+                x.split("|")[3]) is None else rds_type.get(x.split("|")[3])
+            rds_type.close()
+            return res
 
         process_lines = self.lines.map(helper)
 

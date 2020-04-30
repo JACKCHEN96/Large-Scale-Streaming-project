@@ -73,7 +73,6 @@ p5 = Process(target=template_05_main)
 # template_pool = [p1]
 
 p0.start()
-
 p1.start()
 p2.start()
 p3.start()
@@ -132,7 +131,6 @@ def workload_generator(request):
 
 def plan_platform(request):
     if request.method == "POST":
-        # TODO: acquire updated parameters from request.POST
 
         form_people_id = request.POST.get("form_people_id", "")
         form_tag = request.POST.getlist("form_tag", None)
