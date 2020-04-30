@@ -39,7 +39,7 @@ class template_0:
     def __str__(self):
         pass
 
-    def count_duration(self, n):
+    def count_duration(self):
         """
         This function is to read n lines data from redis, then count the call time duration sum of every hour.
         """
