@@ -18,7 +18,7 @@ class template_02:
     The third template to analyze the type/tag of people
     """
 
-    def __init__(self, IP="localhost", interval=10, port=9002):
+    def __init__(self, IP="localhost", interval=30, port=9002):
         self.spark = SparkSession.builder.appName('template2').getOrCreate()
         self.sc = SparkContext.getOrCreate(SparkConf().setMaster("local"))
 
@@ -26,7 +26,7 @@ class template_02:
         self.sql_context = SparkSession(self.sc)
 
         # create the Streaming Context from the above spark context with batch interval size (seconds)
-        self.ssc = StreamingContext(self.sc, 10)
+        self.ssc = StreamingContext(self.sc, 30)
         self.IP=IP
         self.interval=interval
         self.port=port

@@ -205,12 +205,9 @@ class data_generator:
             14: "Emergency",
             # "Private",
             15: "Private",
-            16: "Private",
-            17: "Private",
-            18: "Private",
-            19: "Private"
+            16: "Private"
         }
-        r = random.randint(0, 20)
+        r = random.randint(0, 17)
         if (pick_type_distribution == "default"):
             return type.get(r)
 
