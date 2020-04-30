@@ -51,12 +51,12 @@ thread0 = dataGenThread(pick_type_distribution='default',
                         rate_place_distribution=0.7)
 
 p0 = Process(target=template_0_main)
-p1 = Process(target=template_1_main)
-p2 = Process(target = template_2_main)
-p3 = Process(target=template_3_main)
-p5 = Process(target=template_05_main)
-template_pool = [p0, p1, p3, p5]
-
+# p1 = Process(target=template_1_main)
+# p2 = Process(target = template_2_main)
+# p3 = Process(target=template_3_main)
+# p5 = Process(target=template_05_main)
+# template_pool = [p0, p1, p3, p5]
+template_pool = [p0]
 
 def hello_world(request):
     return render(request, 'hello_world.html', {})
@@ -243,28 +243,29 @@ def data_gen_start(request):
     thread0.start()
     logger.info("Start data generator")
     p0.start()
-    p1.start()
-    p2.start()
-    p3.start()
-    p5.start()
+    # p1.start()
+    # p2.start()
+    # p3.start()
+    # p5.start()
     return HttpResponse('Success')
 
 
 def data_gen_stop(request):
     global data_generator_exit_flag
-    global thread0, p0, p1, p3, p5 , p2
+    # global thread0, p0, p1, p3, p5 , p2
+    global thread0, p0
 
     # restart template process
     p0.terminate()
-    p1.terminate()
-    p2.terminate()
-    p3.terminate()
-    p5.terminate()
+    # p1.terminate()
+    # p2.terminate()
+    # p3.terminate()
+    # p5.terminate()
     p0 = Process(target=template_0_main)
-    p1 = Process(target=template_1_main)
-    p2 = Process(target = template_2_main)
-    p3 = Process(target=template_3_main)
-    p5 = Process(target=template_05_main)
+    # p1 = Process(target=template_1_main)
+    # p2 = Process(target = template_2_main)
+    # p3 = Process(target=template_3_main)
+    # p5 = Process(target=template_05_main)
     data_generator_exit_flag = 1
     while (thread0.isAlive()):
         time.sleep(0.01)

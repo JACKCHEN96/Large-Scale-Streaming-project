@@ -6,17 +6,13 @@ STORE_DIR = os.path.join(
 
 
 def get_tmp0_data():
-    CURRENT_DIR = os.path.join(STORE_DIR, "tmp0")
-    tmp0_json_list = ["tmp0_afternoon.json", "tmp0_evening.json",
-                      "tmp0_midnight.json", "tmp0_morning.json"]
+    tmp0_json_file = os.path.join(STORE_DIR, "tmp0", "tmp0.json")
     raw_data = []
-
-    for json_name in tmp0_json_list:
-        with open(os.path.join(CURRENT_DIR, json_name)) as f:
-            res = json.load(f)
-            for i in range(len(res["_1"])):
-                raw_data.append((int(res["_1"][str(i)]), res["_2"][str(i)]))
-            del res
+    with open(tmp0_json_file) as f:
+        res = json.load(f)
+        for i in range(len(res["_1"])):
+            raw_data.append((int(res["_1"][str(i)]), res["_2"][str(i)]))
+        del res
     raw_data.sort()
     res = list(zip(*raw_data))
     del raw_data
