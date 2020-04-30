@@ -65,10 +65,10 @@ class template_05:
         # people_calltime_count_total.pprint()
 
         people_calltime_w_count.foreachRDD(lambda rdd: rdd.sortBy(lambda x: (x[0], -x[2], x[1])).map(lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x)
-                                           .sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp5", "day.json")) if not rdd.isEmpty() else None)
+                                           .sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp5", "day2.json")) if not rdd.isEmpty() else None)
         people_calltime_w_count.pprint()
         people_calltime_d_count.foreachRDD(lambda rdd: rdd.sortBy(lambda x: (x[0], -x[2], x[1])).map(lambda x: (x[0], x[1])).distinct().reduceByKey(lambda x, y: x)
-                                           .sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp5", "clock.json")) if not rdd.isEmpty() else None)
+                                           .sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp5", "clock2.json")) if not rdd.isEmpty() else None)
         people_calltime_d_count.pprint()
 
 
