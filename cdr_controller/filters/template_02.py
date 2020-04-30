@@ -20,7 +20,7 @@ class template_02:
 
     def __init__(self, IP="localhost", interval=30, port=9002):
         self.spark = SparkSession.builder.appName('template2').getOrCreate()
-        self.sc = SparkContext.getOrCreate(SparkConf().setMaster("local"))
+        self.sc = SparkContext.getOrCreate(SparkConf().setMaster("local[2]"))
 
         # create sql context, used for saving rdd
         self.sql_context = SparkSession(self.sc)
@@ -47,10 +47,16 @@ class template_02:
         # Drop all invalid data. TODO
 
         def helper(x):
-            rds_type = redis.Redis(host="localhost", port=6379, decode_responses=True,
-                                   db=1)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+            try:
 
-            return (x.split("|")[0],"Private") if rds_type.get(x.split("|")[3])==None else (x.split("|")[0],rds_type.get(x.split("|")[3]))
+                rds_type = redis.Redis(host="localhost", port=6379, decode_responses=True,
+                                       db=1)  # host是redis主机，需要redis服务端和客户端都启动 redis默认端口是6379
+
+                return (x.split("|")[0],"Private") if rds_type.get(x.split("|")[3])==None else (x.split("|")[0],rds_type.get(x.split("|")[3]))
+            except Exception as e:
+                print(e)
+            finally:
+                return x.split("|")[0],"Private"
 
         def mapper(x):
 
@@ -83,18 +89,18 @@ class template_02:
         process_lines=self.lines.map(helper)
         # process_lines.pprint()
         people_type_count=process_lines.countByValue().map(lambda x: (x[0][0],x[0][1],x[1]))
-        people_type_count.pprint()
+        # people_type_count.pprint()
         # First, people with type
         people_type_max=people_type_count.transform(lambda rdd: rdd.sortBy(lambda x: (x[0],-int(x[2]),x[1])).map(lambda x: (x[0],x[1])).reduceByKey(lambda x,y:x))
 
-        people_type_max.pprint()
+        # people_type_max.pprint()
         people_type_max.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp2", "pptype.json")) if not rdd.isEmpty() else None)
         # Second, people with tag
         people_tag=people_type_count.map(mapper)
         people_tag_max=people_tag.transform(lambda rdd: rdd.sortBy(lambda x: (x[0],-int(x[2]),x[1])).map(lambda x: (x[0],x[1])).reduceByKey(lambda x,y:x))
-
-        people_type_max.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp2", "pptag.json")) if not rdd.isEmpty() else None)
         people_tag_max.pprint()
+        people_type_max.foreachRDD(lambda rdd: rdd.sortBy(lambda x: x[0]).toDF().toPandas().to_json(os.path.join(STORE_DIR, "tmp2", "pptag.json")) if not rdd.isEmpty() else None)
+
 
 
 
@@ -104,7 +110,6 @@ def template_2_main():
 
     test_temp_2.ssc.start()
     print("Start process 0 for template 2")
-    time.sleep(60)
     # test_temp_0.ssc.stop(stopSparkContext=False, stopGraceFully=True)
     test_temp_2.ssc.awaitTermination() # used for real time
 

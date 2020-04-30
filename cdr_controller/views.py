@@ -58,10 +58,10 @@ p5 = Process(target=template_05_main)
 # template_pool = [p0, p1, p3, p5]
 template_pool = [p1]
 
-p0.start()
-p1.start()
-# p2.start()
-p3.start()
+# p0.start()
+# p1.start()
+p2.start()
+# p3.start()
 # p5.start()
 
 
