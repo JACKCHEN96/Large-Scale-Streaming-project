@@ -139,83 +139,92 @@
                         <div class="card shadow mb-4 ">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">
-                                    Configuration</h6>
+                                    Specify Condionts</h6>
                             </div>
                             <div class="card-body">
                                 <form method="post">
                                     {% csrf_token %}
                                     <div class="form-group row">
-                                        <label
-                                                for="{[ pick_type_distribution ]}"
-                                                class="col-sm-4 col-form-label">Pick
-                                            type distribution</label>
-                                        <div class="col-sm-6">
-                                            <select class="form-control"
-                                                    id="{[ pick_type_distribution ]}"
-                                                    name="pick_type_distribution">
-                                                <option>Business</option>
-                                                <option>Agency</option>
-                                                <option>Education</option>
-                                                <option>Scam</option>
-                                                <option>Health</option>
-                                                <option>AD</option>
-                                            </select>
-                                        </div>
-
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="{[ rate_type_distribution ]}"
-                                               class="col-sm-4 col-form-label">Rate
-                                            type distribution</label>
+                                        <label for="{[ form_people_id ]}"
+                                               class="col-sm-4 col-form-label">People
+                                            Id</label>
                                         <div class="col-sm-6">
                                             <input type="text"
                                                    class="form-control"
-                                                   id="{[ rate_type_distribution ]}"
-                                                   name="rate_type_distribution"
-                                                   placeholder="0.0~1.0">
+                                                   id="{[ form_people_id ]}"
+                                                   name="form_people_id"
+                                                   placeholder="left empty for selecting all">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="{[ pick_call_distribution ]}"
+                                        <label for="{[ form_tag ]}"
+                                               class="col-sm-4 col-form-label">Select
+                                            Tags</label>
+                                        <div class="col-sm-6">
+                                        <select multiple class="form-control"
+                                                id="{[ form_tag ]}" name="form_tag">
+                                            <option>Business</option>
+                                            <option>Agency</option>
+                                            <option>Education</option>
+                                            <option>Health</option>
+                                            <option>AD</option>
+                                            <option>Private</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="{[ form_day ]}"
                                                class="col-sm-4 col-form-label">Pick
-                                            call distribution</label>
+                                            Day</label>
                                         <div class="col-sm-6">
                                             <select class="form-control"
-                                                    id="{[ pick_call_distribution ]}"
-                                                    name="pick_call_distribution">
-                                                <option>midnight mode</option>
-                                                <option>morning mode</option>
-                                                <option>afternoon mode</option>
-                                                <option>evening mode</option>
+                                                    id="{[ form_day ]}"
+                                                    name="form_day">
+                                                <option value="">default</option>
+                                                <option>Sun</option>
+                                                <option>Mon</option>
+                                                <option>Tue</option>
+                                                <option>Wed</option>
+                                                <option>Thu</option>
+                                                <option>Fri</option>
+                                                <option>Sat</option>
                                             </select>
                                         </div>
-
                                     </div>
+
                                     <div class="form-group row">
-                                        <label for="{[ delta_distribution ]}"
-                                               class="col-sm-4 col-form-label">Pick
-                                            delta distribution</label>
+                                        <label for="{[ form_clock ]}"
+                                               class="col-sm-4 col-form-label">Pick Time Period</label>
                                         <div class="col-sm-6">
                                             <select class="form-control"
-                                                    id="{[ delta_distribution ]}"
-                                                    name="delta_distribution">
-                                                <option>exponential</option>
-                                                <option>poisson</option>
-                                                <option>binomial</option>
+                                                    id="{[ form_clock ]}"
+                                                    name="form_clock">
+                                                <option value="">default</option>
+                                                <option value=0>00:00 -- 01:00</option>
+                                                <option value=1>01:00 -- 02:00</option>
+                                                <option value=2>02:00 -- 03:00</option>
+                                                <option value=3>03:00 -- 04:00</option>
+                                                <option value=4>04:00 -- 05:00</option>
+                                                <option value=5>05:00 -- 06:00</option>
+                                                <option value=6>06:00 -- 07:00</option>
+                                                <option value=7>07:00 -- 08:00</option>
+                                                <option value=8>08:00 -- 09:00</option>
+                                                <option value=9>09:00 -- 10:00</option>
+                                                <option value=10>10:00 -- 11:00</option>
+                                                <option value=11>11:00 -- 12:00</option>
+                                                <option value=12>12:00 -- 13:00</option>
+                                                <option value=13>13:00 -- 14:00</option>
+                                                <option value=14>14:00 -- 15:00</option>
+                                                <option value=15>15:00 -- 16:00</option>
+                                                <option value=16>16:00 -- 17:00</option>
+                                                <option value=17>17:00 -- 18:00</option>
+                                                <option value=18>18:00 -- 19:00</option>
+                                                <option value=19>19:00 -- 20:00</option>
+                                                <option value=20>20:00 -- 21:00</option>
+                                                <option value=21>21:00 -- 22:00</option>
+                                                <option value=22>22:00 -- 23:00</option>
+                                                <option value=23>23:00 -- 00:00</option>
                                             </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label for="{[ delta_distribution ]}"
-                                               class="col-sm-4 col-form-label">Rate
-                                            place distribution</label>
-                                        <div class="col-sm-6">
-                                            <input type="text"
-                                                   class="form-control"
-                                                   id="{[ rate_place_distribution ]}"
-                                                   name="rate_place_distribution"
-                                                   placeholder="0.0~1.0">
                                         </div>
                                     </div>
                                     <hr>
@@ -308,10 +317,15 @@
     $(document).ready(function () {
         $('#dataTable').DataTable(datasetTable);
     });
+
+    $(document).ready(function () {
+        $('.mdb-select').materialSelect();
+    });
 </script>
 
+
 <script>
-{# TODO: bind update datatable with update button #}
+    {# TODO: bind update datatable with update button #}
 
 </script>
 </body>

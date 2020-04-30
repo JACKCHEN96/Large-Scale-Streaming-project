@@ -162,6 +162,12 @@ dataset_table = {
 def plan_platform(request):
     if request.method == "POST":
         # TODO: acquire updated parameters from request.POST
+
+        form_people_id = request.POST.get("form_people_id", "")
+        form_tag = request.POST.getlist("form_tag", [])
+        form_day = request.POST.get("form_day", "")
+        form_clock = request.POST.get("form_clock", "")
+
         return render(request, "plan_platform.html",
                       {"datasetTable": dataset_table})
     return render(request, "plan_platform.html",
