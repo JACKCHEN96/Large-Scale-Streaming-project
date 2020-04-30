@@ -97,7 +97,7 @@ def get_form_data(people_id="", tags=None, day="", clock=""):
     tmp1_df = pd.merge(tag_df, type_df, how="outer", on="people-id")
     tmp2_df = pd.merge(clock_df, day_df, how="outer", on="people-id")
 
-    tmp_df = pd.merge(tmp1_df, tmp2_df)
+    tmp_df = pd.merge(tmp1_df, tmp2_df, how="outer", on="people-id")
     # apply filter conditions
     if not people_id == "":
         tmp_df = tmp_df.loc[tmp_df["people-id"] == people_id]
