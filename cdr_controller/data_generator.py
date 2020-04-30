@@ -77,7 +77,7 @@ class data_generator:
         """
         A dummy way to do this, to be continued.
         """
-        r = random.randint(0, 6)
+        r = random.randint(0, 10)
         i = 1
         if (r == 0):
             call_distribution = "midnight mode"
@@ -111,30 +111,29 @@ class data_generator:
         b = 133920 * startt - pastt
         time1 = cur_t * 133920 - b
         time2 = time1 + 133920
-
         if (call_distribution == "midnight mode"):
             # TODO
             # starttime = uniform(time1, time2)
             starttime = asctime(localtime(uniform(time1, time2)))
-            while ((starttime.split(" ")[3].split(":")[0] > "6") and i < 4):
+            while ((int(starttime.split(" ")[3].split(":")[0]) > 6) and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "morning mode"):
             # TODO
             starttime = asctime(localtime(uniform(time1, time2)))
-            while ((starttime.split(" ")[3].split(":")[0] > "12" or
-                   starttime.split(" ")[3].split(":")[0] < "6") and i < 4):
+            while ((int(starttime.split(" ")[3].split(":")[0]) > 12 or
+                   int(starttime.split(" ")[3].split(":")[0]) < 6) and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "afternoon mode"):
             starttime = asctime(localtime(uniform(time1, time2)))
-            while ((starttime.split(" ")[3].split(":")[0] > "18" or
-                   starttime.split(" ")[3].split(":")[0] < "12") and i < 4):
+            while ((int(starttime.split(" ")[3].split(":")[0]) > 18 or
+                   int(starttime.split(" ")[3].split(":")[0]) < 12) and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "evening mode"):
             starttime = asctime(localtime(uniform(time1, time2)))
-            while ((starttime.split(" ")[3].split(":")[0] < "18") and i < 4):
+            while ((int(starttime.split(" ")[3].split(":")[0]) < 18) and i < 4):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         else:
@@ -323,7 +322,7 @@ class people:
 
 # # test people
 # print("------------ test people ------------")
-# p1 = people()
+# p1 = people(pick_call_distribution="midnight mode", pick_type_distribution="Emergency")
 # print(p1)
 
 # # test iterate redis datas
