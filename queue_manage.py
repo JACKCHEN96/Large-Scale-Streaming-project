@@ -32,6 +32,7 @@ if __name__ == '__main__':
     while True:
         test(Name = listName)
         print(flag)
+        r = s0.recv(1024)
         if r != b'':
             conn.close()
             conn, addr = s0.accept()
