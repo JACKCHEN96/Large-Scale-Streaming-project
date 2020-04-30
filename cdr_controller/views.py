@@ -14,6 +14,8 @@ from cdr_controller.filters.template_05 import template_05_main
 from . import data_generator
 from .get_result import *
 
+import socket
+
 data_generator_exit_flag = 0
 logger = logging.getLogger(__name__)
 logging.getLogger("py4j").setLevel(logging.ERROR)
@@ -261,6 +263,11 @@ def data_gen_stop(request):
     p2.terminate()
     p3.terminate()
     p5.terminate()
+    data_gen_stop_queue(9000)
+    data_gen_stop_queue(9001)
+    data_gen_stop_queue(9002)
+    data_gen_stop_queue(9003)
+    data_gen_stop_queue(9005)
     p0 = Process(target=template_0_main)
     p1 = Process(target=template_1_main)
     p2 = Process(target = template_2_main)
@@ -272,3 +279,9 @@ def data_gen_stop(request):
         print('thread alive')
     logger.info('thread killed')
     return HttpResponse('Try to stop')
+
+def data_gen_stop_queue(port):
+    s0 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s0.connect(('localhost',port))
+    s0.send(bytes('restart', 'utf-8'))
+    s0.close()

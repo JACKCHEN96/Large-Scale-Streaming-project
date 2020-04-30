@@ -32,9 +32,13 @@ if __name__ == '__main__':
     while True:
         test(Name = listName)
         print(flag)
-        if flag != 0 and data != "":
-            conn.sendall(bytes(data, 'utf-8'))
-            flag = 0
-            print('send')
+        if r != b'':
+            conn.close()
+            conn, addr = s0.accept()
         else:
-            print('wait')
+            if flag != 0 and data != "":
+                conn.sendall(bytes(data, 'utf-8'))
+                flag = 0
+                print('send')
+            else:
+                print('wait')
