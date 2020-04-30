@@ -314,8 +314,7 @@ class people:
 # test generate
 # print("----------- test generate -----------")
 # d1 = data_generator(ID=1)
-# d2 = data_generator(pick_call_distribution="morning mode",
-#                     pick_type_distribution="default", rate_type_distribution=10)
+# d2 = data_generator(pick_call_distribution="morning mode", pick_type_distribution="default", rate_type_distribution=10)
 # print(d1)
 # print(d2)
 # print(d2.type)

@@ -59,10 +59,10 @@ qm3 = Process(target=queueStarter, args=(9003, "ID_03"))
 qm5 = Process(target=queueStarter, args=(9005, "ID_05"))
 
 qm0.start()
-# qm1.start()
-# qm2.start()
-# qm3.start()
-# qm5.start()
+qm1.start()
+qm2.start()
+qm3.start()
+qm5.start()
 
 
 p0 = Process(target=template_0_main)
@@ -76,10 +76,10 @@ p5 = Process(target=template_05_main)
 p0.start()
 
 
-# p1.start()
-# p2.start()
-# p3.start()
-# p5.start()
+p1.start()
+p2.start()
+p3.start()
+p5.start()
 
 
 def hello_world(request):
@@ -221,27 +221,27 @@ def data_gen_start(request):
 
 def data_gen_stop(request):
     global data_generator_exit_flag
-    # global thread0, p0, p1, p3, p5 , p2
-    global thread0, p0
+    global thread0, p0, p1, p3, p5 , p2
+    # global thread0, p0
 
     # restart template process
     p0.terminate()
-    # p1.terminate()
-    # p2.terminate()
-    # p3.terminate()
-    # p5.terminate()
+    p1.terminate()
+    p2.terminate()
+    p3.terminate()
+    p5.terminate()
     # del p0, p3, p5
     p0 = Process(target=template_0_main)
-    # p1 = Process(target=template_1_main)
-    # p2 = Process(target = template_2_main)
+    p1 = Process(target=template_1_main)
+    p2 = Process(target = template_2_main)
     p3 = Process(target=template_3_main)
     p5 = Process(target=template_05_main)
 
     p0.start()
-    # p1.start()
-    # # p2.start()
-    # p3.start()
-    # p5.start()
+    p1.start()
+    p2.start()
+    p3.start()
+    p5.start()
 
     data_generator_exit_flag = 1
     while (thread0.isAlive()):
