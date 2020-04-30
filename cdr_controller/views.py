@@ -1,7 +1,5 @@
 import logging
 import threading
-import time
-from multiprocessing import Process
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -14,7 +12,6 @@ from cdr_controller.filters.template_05 import template_05_main
 from . import data_generator
 from .get_result import *
 from .queue_manage import *
-
 
 data_generator_exit_flag = 0
 logger = logging.getLogger(__name__)
@@ -70,13 +67,15 @@ qm0.start()
 
 p0 = Process(target=template_0_main)
 p1 = Process(target=template_1_main)
-p2 = Process(target = template_2_main)
+p2 = Process(target=template_2_main)
 p3 = Process(target=template_3_main)
 p5 = Process(target=template_05_main)
 # template_pool = [p0, p1, p3, p5]
 # template_pool = [p1]
 
 p0.start()
+
+
 # p1.start()
 # p2.start()
 # p3.start()
@@ -133,70 +132,20 @@ def workload_generator(request):
     return render(request, 'workload_generator.html', {})
 
 
-dataset_table = {
-    "data": [
-        [
-            "Tiger Nixon",
-            "System Architect",
-            "Edinburgh",
-            "54",
-            "2011/04/25",
-            "$320,800"
-        ],
-        [
-            "Garrett Winters",
-            "Accountant",
-            "Tokyo",
-            "42",
-            "2011/07/25",
-            "$170,750"
-        ],
-        [
-            "Ashton Cox",
-            "Junior Technical Author",
-            "San Francisco",
-            "56",
-            "2009/01/12",
-            "$86,000"
-        ],
-        [
-            "Cedric Kelly",
-            "Senior Javascript Developer",
-            "Edinburgh",
-            "62",
-            "2012/03/29",
-            "$433,060"
-        ],
-        [
-            "Airi Satou",
-            "Accountant",
-            "Tokyo",
-            "54",
-            "2008/11/28",
-            "$162,700"
-        ]],
-    "columns": [{"title": "Name"},
-                {"title": "Position"},
-                {"title": "Office"},
-                {"title": "Age"},
-                {"title": "Start date"},
-                {"title": "Salary"}]
-}
-
-
 def plan_platform(request):
     if request.method == "POST":
         # TODO: acquire updated parameters from request.POST
 
         form_people_id = request.POST.get("form_people_id", "")
-        form_tag = request.POST.getlist("form_tag", [])
+        form_tag = request.POST.getlist("form_tag", None)
         form_day = request.POST.get("form_day", "")
         form_clock = request.POST.get("form_clock", "")
-
+        form_data = get_form_data(people_id=form_people_id, tags=form_tag,
+                                  day=form_day, clock=form_clock)
         return render(request, "plan_platform.html",
-                      {"datasetTable": dataset_table})
+                      {"datasetTable": form_data})
     return render(request, "plan_platform.html",
-                  {"datasetTable": dataset_table})
+                  {"datasetTable": get_form_data()})
 
 
 def page1_view(request):
