@@ -106,7 +106,7 @@ class data_generator:
 
         # startt is the real world start time
         # pastt is the virturl start time you want to set (2016.1.1)
-        startt = 1588035275
+        startt = 1588278283
         pastt=1451624400
         b = 133920 * startt - pastt
         time1 = cur_t * 133920 - b
@@ -321,7 +321,7 @@ class people:
 
 # # test people
 # print("------------ test people ------------")
-# p1 = people(pick_call_distribution="midnight mode", pick_type_distribution="Emergency")
+# p1 = people(pick_call_distribution="midnight mode", pick_type_distribution="Banking")
 # print(p1)
 
 # # test iterate redis datas
