@@ -1,13 +1,13 @@
 __author__ = "Wenjie Chen"
 __email__ = "wc2685@columbia.edu"
 
-import random
-import uuid
-from random import uniform
-from time import *
 
+import uuid
 import numpy as np
 import redis
+import random
+from random import uniform
+from time import *
 from phonenumbers.phonenumberutil import region_code_for_country_code
 
 # f1=faker.Factory
@@ -37,8 +37,7 @@ class data_generator:
         self.teltype = self.gen_teltype()
         self.charge = self.gen_charge()
         self.result = self.gen_result()
-        self.type = self.gen_type(pick_type_distribution,
-                                  rate_type_distribution)
+        self.type = self.gen_type(pick_type_distribution, rate_type_distribution)
 
         if ID is not None: self.ID = ID
         if callednumber is not None: self.callednumber = callednumber
@@ -90,50 +89,48 @@ class data_generator:
         else:
             call_distribution = pick_call_distribution
 
-        # mktime(tuple)讲时间元组转换为本地时间
-        # 日期元组说明：年，月，日，时，分，秒，周，儒历日，夏令时
+        # mktime(tuple) turn time tuple to local time
+        # time tuple：年，月，日，时，分，秒，周，儒历日，夏令时
         # date1 = (2018, 1, 1, 0, 0, 0, -1, -1, -1)
         # time1 = mktime(date1)
         # date2 = (2020, 1, 1, 0, 0, 0, -1, -1, -1)
         # time2 = mktime(date2)
-        # 在这一范围内生成随机数
+        # get random in this period
         # starttime = uniform(time1, time2)
-        # localtime(seconds)将秒数转换为日期元组
-        # 打印例子：Wed Feb 24 05:29:22 2016
+        # localtime(seconds) turn seconds to time tuple
+        # example：Wed Feb 24 05:29:22 2016
 
         # a*delta_now=delta_past
         # 3 month to 12 min, so a=133920
-
         # startt is the real world start time
         # pastt is the virturl start time you want to set (2016.1.1)
-        startt = 1588278283
+        startt = 1588962538
         pastt=1451624400
         b = 133920 * startt - pastt
         time1 = cur_t * 133920 - b
         time2 = time1 + 133920
+
+        maxloop=4
         if (call_distribution == "midnight mode"):
-            # TODO
-            # starttime = uniform(time1, time2)
             starttime = asctime(localtime(uniform(time1, time2)))
-            while ((int(starttime.split(" ")[3].split(":")[0]) > 6) and i < 4):
+            while ((int(starttime.split(" ")[3].split(":")[0]) > 6) and i < maxloop):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "morning mode"):
-            # TODO
             starttime = asctime(localtime(uniform(time1, time2)))
             while ((int(starttime.split(" ")[3].split(":")[0]) > 12 or
-                   int(starttime.split(" ")[3].split(":")[0]) < 6) and i < 4):
+                   int(starttime.split(" ")[3].split(":")[0]) < 6) and i < maxloop):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "afternoon mode"):
             starttime = asctime(localtime(uniform(time1, time2)))
             while ((int(starttime.split(" ")[3].split(":")[0]) > 18 or
-                   int(starttime.split(" ")[3].split(":")[0]) < 12) and i < 4):
+                   int(starttime.split(" ")[3].split(":")[0]) < 12) and i < maxloop):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         elif (call_distribution == "evening mode"):
             starttime = asctime(localtime(uniform(time1, time2)))
-            while ((int(starttime.split(" ")[3].split(":")[0]) < 18) and i < 4):
+            while ((int(starttime.split(" ")[3].split(":")[0]) < 18) and i < maxloop):
                 starttime = asctime(localtime(uniform(time1, time2)))
                 i += 1
         else:
@@ -142,21 +139,15 @@ class data_generator:
         # If you are confused of distribution command, please refer to this tutorial:
         # https://blog.csdn.net/howhigh/article/details/78007317
         if (delta_distribution == "exponential"):
-            # TODO
             timedelta = np.random.exponential(600, 1)[0]
         elif (delta_distribution == "poisson"):
-            # TODO
             timedelta = np.random.poisson(600, 1)[0]
         elif (delta_distribution == "binomial"):
-            # TODO
             timedelta = np.random.binomial(1200, 0.5, 1)[0]
         else:
             timedelta = random.randint(0, 6000)
-            # timedelta = np.random.exponential(600, 1)[0]
-            # timedelta = np.random.poisson(600, 1)[0]
-            # timedelta = np.random.binomial(1200, 0.5, 1)[0]
 
-        # asctime([tuple]) 将时间元组转换为字符串
+        # asctime([tuple]) turn time tuple to string
         return starttime + "|" + str(timedelta)
 
     def gen_teltype(self):
@@ -310,7 +301,6 @@ class people:
         rds.lpush('ID_05',str(tempdata))
 
 
-# p1=people()
 # test generate
 # print("----------- test generate -----------")
 # d1 = data_generator(ID=1)
@@ -319,17 +309,21 @@ class people:
 # print(d2)
 # print(d2.type)
 
-# # test people
+# test people
 # print("------------ test people ------------")
 # p1 = people(pick_call_distribution="midnight mode", pick_type_distribution="Banking")
-# print(p1)
+p1=people()
+print(p1)
 
 # # test iterate redis datas
 # print("-------------- test iterate redis data --------------")
 # keys = rds.keys()
 # print(keys)
-#
-# # test iterate redis_type data
+
+# test iterate redis_type data
 # print("-------------- test iterate redis_type data --------------")
 # keys_type = rds_type.keys()
 # print(keys_type)
+
+# correction factor (set the answer to startt)
+# print(time())
