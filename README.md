@@ -2,7 +2,7 @@
 
 A toy project of markting platform to manage call by using `Spark Streaming` as stream processor, `Django` as back-end, [`SB Admin 2`](https://startbootstrap.com/themes/sb-admin-2/) as front-end template and `Redis` as Message Queue.
 
-This is final project for COMS W4115 programming language & translator @ Columbia.
+This is final project for ELEN E6889 Large-Scale Stream Processing @ Columbia.
 
 ## Introduction
 
@@ -120,7 +120,12 @@ See more details about how we design this project, how we implement each compone
 
 ## Contribution
 
-
+- Workload Generator: Wenjie Chen, Yanchen Liu
+- Queue Manager: Yanchen Liu, Chong Hu
+- Templates: Wenjie Chen, Chong Hu
+- Django back-end construction: Chong Hu, Yanchen Liu
+- Front-end: Chong Hu
+- Documentation:  Wenjie Chen, Chong Hu, Jiajing Su, Yanchen Liu
 
 ## Acknowledgements
 
