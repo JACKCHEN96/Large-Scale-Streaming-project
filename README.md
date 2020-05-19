@@ -13,6 +13,7 @@ Our project implement a rule-based marketing platform to manage Call Detail Reco
 ### System Architecture
 
 ![System Architecture](pic/SystemArchitecture.png)
+See more about our system from [report](doc/large_scale_stream_processing_final_report.pdf)
 
 ### Code Structure
 
@@ -71,6 +72,44 @@ python3 manage.py runserver localhost:8000
 ```
 
 ## Usage
+
+- Homepage
+  - First visit `localhost:8000/`, which is a welcome page.
+  - press the start button to start workload generator in back-end
+  
+    <img src="pic/start.png" width="400" alt="start">
+- Dashboard
+  - After pressing the start button, web will redirect to `localhost:8000/index`.
+  - The dashboard page shows extracted features of stream in real-time. 
+  
+    <img src="pic/dashboard.png" width="400" alt="dashboard">
+  - You can access other componment by the sidebar.
+  
+    <img src="pic/sidebar.png" width="100" >
+
+- Workload Generator
+  - Workload generator will be shown at `localhost:8000/workload_generator`
+  - You can change the controlling parameters by filling the form.
+  - After pressing `Update`, back-end may need several minutes to update workload generator configuration.
+  
+    <img src="pic/workload_generator.png" width="400" alt="workload generator" >
+
+- Templates:
+  - Each templates details can be also found at `localhost:8000/filters/template<id>`
+  
+    <img src="pic/template1.png" width="400" alt="template1" >
+
+- Policy & Plan page
+  - This page is used to decide different policy and send promotion to corresponding users.
+  - A table showing those users respesents the backend applys certain rules or send promotions to those users.
+  - The form in the left represent some rules that can be applied.
+    
+    <img src="pic/plan_platform.png" width="400" alt="plan decision page"> 
+
+
+## Details
+
+See more details about how we design this project, how we implement each components, what algorithms we applied to optimize stream processing from [report](doc/large_scale_stream_processing_final_report.pdf)
 
 
 ## Documentation
